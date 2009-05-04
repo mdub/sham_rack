@@ -87,46 +87,29 @@ describe ShamRack do
 
   end
 
-  describe "Rack environment" do
-    
-    before(:all) do
-      rack_environment = nil
-      ShamRack.lambda("env.xyz") do |env|
-        @env = env
-        ["200 OK", {}, ""]
-      end
+  it "provides a Rack environment" do
 
-      open("http://env.xyz/blah?q=abc")
+    ShamRack.lambda("env.xyz") do |env|
+      @env = env
+      ["200 OK", {}, ""]
     end
 
-    it "provides REQUEST_METHOD" do
-      @env["REQUEST_METHOD"].should == "GET"
-    end
+    open("http://env.xyz/blah?q=abc")
 
-    it "provides (empty) SCRIPT_NAME" do
-      @env["SCRIPT_NAME"].should == ""
-    end
+    @env["REQUEST_METHOD"].should == "GET"
+    @env["SCRIPT_NAME"].should == ""
+    @env["PATH_INFO"].should == "/blah"
+    @env["QUERY_STRING"].should == "q=abc"
+    @env["SERVER_NAME"].should == "env.xyz"
+    @env["SERVER_PORT"].should == "80"
 
-    it "provides PATH_INFO" do
-      @env["PATH_INFO"].should == "/blah"
-    end
-    
-    it "provides QUERY_STRING" do
-      @env["QUERY_STRING"].should == "q=abc"
-    end
-
-    it "provides SERVER_NAME" do
-      @env["SERVER_NAME"].should == "env.xyz"
-    end
-    
-    it "provides SERVER_PORT" do
-      @env["SERVER_PORT"].should == "80"
-    end
-
-# QUERY_STRING: The portion of the request URL that follows the ?, if any. May be empty, but is always required!
-# SERVER_NAME, SERVER_PORT: When combined with SCRIPT_NAME and PATH_INFO, these variables can be used to complete the URL. Note, however, that HTTP_HOST, if present, should be used in preference to SERVER_NAME for reconstructing the request URL. SERVER_NAME and SERVER_PORT can never be empty strings, and so are always required.
-
-    
+    @env["rack.version"].should == [0,1]
+    @env["rack.url_scheme"].should == "http"
+    # rack.input: See below, the input stream.
+    # rack.errors:  See below, the error stream.
+    @env["rack.multithread"].should == true
+    @env["rack.multiprocess"].should == true
+    @env["rack.run_once"].should == false
   end
 
 end

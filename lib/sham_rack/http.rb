@@ -21,7 +21,12 @@ module ShamRack
         "PATH_INFO" => uri.path,
         "QUERY_STRING" => (uri.query || ""),
         "SERVER_NAME" => @address,
-        "SERVER_PORT" => @port.to_s
+        "SERVER_PORT" => @port.to_s,   
+        "rack.version" => [0,1],
+        "rack.url_scheme" => "http",
+        "rack.multithread" => true,
+        "rack.multiprocess" => true,
+        "rack.run_once" => false
       }
       response = build_response(@rack_app.call(env))
       yield response if block_given?
