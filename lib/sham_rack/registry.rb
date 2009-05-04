@@ -11,6 +11,10 @@ module ShamRack
       mount(app, address, port)
     end
     
+    def lambda(address, port = Net::HTTP.default_port, &block)
+      mount(block, address, port)
+    end
+
     def unmount_all
       registry.clear
     end

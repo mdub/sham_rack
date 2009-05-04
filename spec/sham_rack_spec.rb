@@ -17,7 +17,7 @@ class PlainApp
 end
 
 class BIFF
-  
+
   def initialize(app)
     @app = app
   end
@@ -31,17 +31,15 @@ end
 
 describe ShamRack do
 
-  after(:all) do
+  after(:each) do
     ShamRack.unmount_all
   end
 
-  describe "mounted app" do
+  describe "#mount" do
 
-    before(:all) do
+    it "makes a Rack application accessible using Net::HTTP" do
       ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
-    end
 
-    it "can be accessed using open-uri" do
       response = open("http://www.test.xyz")
       response.status.should == ["200", "OK"]
       response.read.should == "Hello, world"
@@ -51,7 +49,7 @@ describe ShamRack do
 
   describe "#rackup" do
 
-    it "uses Rack's builder DSL" do
+    it "mounts an app created using Rack::Builder" do
       ShamRack.rackup("rackup.xyz") do
         use BIFF
         run PlainApp.new("Racked!")
@@ -62,5 +60,16 @@ describe ShamRack do
 
   end
 
+  describe "#lambda" do
+
+    it "mounts associated block as an app" do
+      ShamRack.lambda("simple.xyz") do |env|
+        ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?" ]
+      end
+
+      open("http://simple.xyz").read.should == "Easy, huh?"
+    end
+
+  end
 
 end
