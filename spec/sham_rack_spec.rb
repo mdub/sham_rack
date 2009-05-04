@@ -2,28 +2,65 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 require "sham_rack"
 require "open-uri"
+require "rack"
+
+class PlainApp
+
+  def initialize(message)
+    @message = message
+  end
+
+  def call(env)
+    ["200 OK", { "Content-type" => "text/plain" }, @message.dup ]
+  end
+
+end
+
+class BIFF
+  
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, body = @app.call(env)
+    [status, headers, body.upcase]
+  end
+
+end
 
 describe ShamRack do
-  
-  describe "mounted echo app" do
-    
+
+  after(:all) do
+    ShamRack.unmount_all
+  end
+
+  describe "mounted app" do
+
     before(:all) do
-      hello_app = lambda do |env| 
-        ["200 OK", { "Content-type" => "text/plain" }, "Hello, world" ]
-      end
-      ShamRack.mount(hello_app, "www.test.xyz")
+      ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
     end
-    
-    after(:all) do
-      ShamRack.unmount_all
-    end
-    
+
     it "can be accessed using open-uri" do
       response = open("http://www.test.xyz")
-      response.status[0].should == "200"
+      response.status.should == ["200", "OK"]
       response.read.should == "Hello, world"
     end
-    
+
   end
-  
+
+  describe "#rackup" do
+
+    it "uses Rack's builder DSL" do
+      ShamRack.rackup("rackup.xyz") do
+        use BIFF
+        run PlainApp.new("Racked!")
+      end
+
+      open("http://rackup.xyz").read.should == "RACKED!"
+    end
+
+  end
+
+
 end
