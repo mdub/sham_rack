@@ -5,7 +5,7 @@ module ShamRack
 
     def initialize(address, port, rack_app)
       @address = address
-      @port = @port
+      @port = port
       @rack_app = rack_app
     end
     
@@ -13,8 +13,16 @@ module ShamRack
       yield self
     end
     
-    def request(*args)
-      env = {}
+    def request(req, body = nil)
+      uri = URI.parse(req.path)
+      env = {
+        "REQUEST_METHOD" => "GET",
+        "SCRIPT_NAME" => "",
+        "PATH_INFO" => uri.path,
+        "QUERY_STRING" => (uri.query || ""),
+        "SERVER_NAME" => @address,
+        "SERVER_PORT" => @port.to_s
+      }
       response = build_response(@rack_app.call(env))
       yield response if block_given?
       response
