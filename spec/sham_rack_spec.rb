@@ -71,5 +71,20 @@ describe ShamRack do
     end
 
   end
+  
+  describe "#sinatra" do
+
+    it "mounts associated block as a Sinatra app" do
+      pending
+      ShamRack.sinatra("sinatra.xyz") do
+        get "/hello/:subject" do
+          "Hello, #{params[:subject]}"
+        end
+      end
+
+      open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
+    end
+
+  end
 
 end
