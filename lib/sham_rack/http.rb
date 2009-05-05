@@ -13,6 +13,8 @@ module ShamRack
       yield self
     end
     
+    attr_accessor :use_ssl, :verify_mode, :read_timeout, :open_timeout
+    
     def request(req, body = nil)
       uri = URI.parse(req.path)
       env = {

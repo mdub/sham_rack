@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 require "sham_rack"
 require "open-uri"
+require "restclient"
 require "rack"
 
 class PlainApp
@@ -35,14 +36,22 @@ describe ShamRack do
     ShamRack.unmount_all
   end
 
-  describe "#mount" do
+  describe "mounted Rack application" do
 
-    it "makes a Rack application accessible using Net::HTTP" do
+    it "can be accessed using open-uri" do
       ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
 
       response = open("http://www.test.xyz")
       response.status.should == ["200", "OK"]
       response.read.should == "Hello, world"
+    end
+
+    it "can be accessed using RestClient" do
+      ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
+
+      response = RestClient.get("http://www.test.xyz")
+      response.code.should == 200
+      response.to_s.should == "Hello, world"
     end
 
   end
