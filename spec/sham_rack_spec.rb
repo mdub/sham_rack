@@ -45,7 +45,7 @@ class EnvRecordingApp < PlainTextApp
   
 end
 
-class BiffFilter
+class UpcaseBody
 
   def initialize(app)
     @app = app
@@ -95,12 +95,14 @@ describe ShamRack do
   describe "#rackup" do
 
     it "mounts an app created using Rack::Builder" do
+      
       ShamRack.rackup("rackup.xyz") do
-        use BiffFilter
+        use UpcaseBody
         run SimpleMessageApp.new("Racked!")
       end
 
       open("http://rackup.xyz").read.should == "RACKED!"
+      
     end
 
   end
@@ -108,11 +110,13 @@ describe ShamRack do
   describe "#lambda" do
 
     it "mounts associated block as an app" do
+      
       ShamRack.lambda("simple.xyz") do |env|
         ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?"]
       end
 
       open("http://simple.xyz").read.should == "Easy, huh?"
+      
     end
 
   end
@@ -120,6 +124,7 @@ describe ShamRack do
   describe "#sinatra" do
 
     it "mounts associated block as a Sinatra app" do
+      
       ShamRack.sinatra("sinatra.xyz") do
         get "/hello/:subject" do
           "Hello, #{params[:subject]}"
@@ -127,6 +132,7 @@ describe ShamRack do
       end
 
       open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
+      
     end
 
   end
