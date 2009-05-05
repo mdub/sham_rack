@@ -16,12 +16,11 @@ module ShamRack
     attr_accessor :use_ssl, :verify_mode, :read_timeout, :open_timeout
     
     def request(req, body = nil)
-      # debugger
       env = default_env
       env.merge!(path_env(req.path))
       env.merge!(method_env(req))
       env.merge!(header_env(req))
-      env.merge!(io_env(req))
+      env.merge!(io_env(req, body))
       response = build_response(@rack_app.call(env))
       yield response if block_given?
       return response
@@ -48,9 +47,11 @@ module ShamRack
       }
     end
     
-    def io_env(request)
+    def io_env(request, body)
+      raise(ArgumentError, "both request.body and body argument were provided") if (request.body && body)
+      body ||= request.body || ""
       { 
-        "rack.input" => StringIO.new(request.body || ""),
+        "rack.input" => StringIO.new(body),
         "rack.errors" => $stderr
       }
     end

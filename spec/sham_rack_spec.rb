@@ -168,7 +168,7 @@ describe ShamRack do
 
     end
 
-    it "provides access to request headers" do
+    it "provides request headers" do
 
       Net::HTTP.start("env.xyz") do |http|
         request = Net::HTTP::Get.new("/")
@@ -180,14 +180,33 @@ describe ShamRack do
 
     end
 
-    it "provides access to POST body" do
+    it "supports POST" do
 
-      Net::HTTP.post_form(URI.parse("http://env.xyz/resource"), "q" => "rack")
+      RestClient.post("http://env.xyz/resource", "q" => "rack")
 
       env["REQUEST_METHOD"].should == "POST"
       env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
       env["rack.input"].read.should == "q=rack"
-      
+
+    end
+
+    it "supports PUT" do
+
+      RestClient.put("http://env.xyz/thing1", "stuff", :content_type => "text/plain")
+
+      env["REQUEST_METHOD"].should == "PUT"
+      env["CONTENT_TYPE"].should == "text/plain"
+      env["rack.input"].read.should == "stuff"
+
+    end
+
+    it "supports DELETE" do
+
+      RestClient.delete("http://env.xyz/thing/1")
+
+      env["REQUEST_METHOD"].should == "DELETE"
+      env["PATH_INFO"].should == "/thing/1"
+
     end
 
   end
