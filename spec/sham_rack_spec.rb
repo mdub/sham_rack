@@ -10,10 +10,7 @@ class PlainTextApp
   def call(env)
     [
       "200 OK", 
-      {
-        "Content-Type" => "text/plain",
-        "Content-Length" => message.length.to_s
-      }, 
+      { "Content-Type" => "text/plain", "Content-Length" => message.length.to_s },
       [message]
     ]
   end
@@ -27,11 +24,11 @@ class SimpleMessageApp < PlainTextApp
   end
 
   attr_reader :message
-  
+
 end
 
 class EnvRecordingApp < PlainTextApp
-  
+
   def call(env)
     @last_env = env
     super
@@ -42,7 +39,7 @@ class EnvRecordingApp < PlainTextApp
   def message
     "env stored for later perusal"
   end
-  
+
 end
 
 class UpcaseBody
@@ -66,7 +63,7 @@ describe ShamRack do
   end
 
   describe "mounted Rack application" do
-    
+
     before(:each) do
       ShamRack.mount(SimpleMessageApp.new("Hello, world"), "www.test.xyz")
     end
@@ -77,7 +74,7 @@ describe ShamRack do
       end
       response.body.should == "Hello, world"
     end
-    
+
     it "can be accessed using open-uri" do
       response = open("http://www.test.xyz")
       response.status.should == ["200", "OK"]
@@ -95,14 +92,14 @@ describe ShamRack do
   describe "#rackup" do
 
     it "mounts an app created using Rack::Builder" do
-      
+
       ShamRack.rackup("rackup.xyz") do
         use UpcaseBody
         run SimpleMessageApp.new("Racked!")
       end
 
       open("http://rackup.xyz").read.should == "RACKED!"
-      
+
     end
 
   end
@@ -110,21 +107,21 @@ describe ShamRack do
   describe "#lambda" do
 
     it "mounts associated block as an app" do
-      
+
       ShamRack.lambda("simple.xyz") do |env|
         ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?"]
       end
 
       open("http://simple.xyz").read.should == "Easy, huh?"
-      
+
     end
 
   end
-  
+
   describe "#sinatra" do
 
     it "mounts associated block as a Sinatra app" do
-      
+
       ShamRack.sinatra("sinatra.xyz") do
         get "/hello/:subject" do
           "Hello, #{params[:subject]}"
@@ -132,52 +129,63 @@ describe ShamRack do
       end
 
       open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
-      
+
     end
 
   end
 
-  it "provides a valid Rack environment" do
+  describe "Rack environment" do
 
-    recorder = EnvRecordingApp.new
-    
-    ShamRack.rackup("env.xyz") do
-      use Rack::Lint
-      run recorder
+    before(:each) do
+      @env_recorder = recorder = EnvRecordingApp.new
+      ShamRack.rackup("env.xyz") do
+        use Rack::Lint
+        run recorder
+      end
     end
 
-    RestClient.get("http://env.xyz/blah?q=abc")
-    env = recorder.last_env
+    def env
+      @env_recorder.last_env
+    end
 
-    env["REQUEST_METHOD"].should == "GET"
-    env["SCRIPT_NAME"].should == ""
-    env["PATH_INFO"].should == "/blah"
-    env["QUERY_STRING"].should == "q=abc"
-    env["SERVER_NAME"].should == "env.xyz"
-    env["SERVER_PORT"].should == "80"
-    
-    env["rack.version"].should == [0,1]
-    env["rack.url_scheme"].should == "http"
-    
-    env["rack.multithread"].should == true
-    env["rack.multiprocess"].should == true
-    env["rack.run_once"].should == false
+    it "is valid" do
+
+      RestClient.get("http://env.xyz/blah?q=abc")
+
+      env["REQUEST_METHOD"].should == "GET"
+      env["SCRIPT_NAME"].should == ""
+      env["PATH_INFO"].should == "/blah"
+      env["QUERY_STRING"].should == "q=abc"
+      env["SERVER_NAME"].should == "env.xyz"
+      env["SERVER_PORT"].should == "80"
+
+      env["rack.version"].should == [0,1]
+      env["rack.url_scheme"].should == "http"
+
+      env["rack.multithread"].should == true
+      env["rack.multiprocess"].should == true
+      env["rack.run_once"].should == false
+
+    end
+
+    it "provides access to request headers" do
+
+      Net::HTTP.start("env.xyz") do |http|
+        request = Net::HTTP::Get.new("/")
+        request["Foo-bar"] = "baz"
+        http.request(request)
+      end
+
+      env["HTTP_FOO_BAR"].should == "baz"
+
+    end
+
+    # it "provides access to POST body" do
+    #   
+    #   RestClient.post()
+    #   
+    # end
 
   end
 
-  it "provides access to request headers" do
-    
-    recorder = EnvRecordingApp.new
-    ShamRack.mount(recorder, "env.xyz") 
-
-    Net::HTTP.start("env.xyz") do |http|
-      request = Net::HTTP::Get.new("/")
-      request["Foo-bar"] = "baz"
-      http.request(request)
-    end
-
-    recorder.last_env["HTTP_FOO_BAR"].should == "baz"
-    
-  end
-  
 end
