@@ -16,7 +16,10 @@ module ShamRack
     attr_accessor :use_ssl, :verify_mode, :read_timeout, :open_timeout
     
     def request(req, body = nil)
-      env = default_env.merge(path_env(req.path)).merge(header_env(req))
+      env = default_env
+      env.merge!(path_env(req.path))
+      env.merge!(header_env(req))
+      env.merge!(io_env(req))
       response = build_response(@rack_app.call(env))
       yield response if block_given?
       return response
@@ -35,6 +38,13 @@ module ShamRack
         "rack.multithread" => true,
         "rack.multiprocess" => true,
         "rack.run_once" => false
+      }
+    end
+    
+    def io_env(request)
+      { 
+        "rack.input" => StringIO.new(""),
+        "rack.errors" => $stderr
       }
     end
     

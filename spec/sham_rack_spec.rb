@@ -5,19 +5,47 @@ require "open-uri"
 require "restclient"
 require "rack"
 
-class PlainApp
+class PlainTextApp
+
+  def call(env)
+    [
+      "200 OK", 
+      {
+        "Content-Type" => "text/plain",
+        "Content-Length" => message.length.to_s
+      }, 
+      [message]
+    ]
+  end
+
+end
+
+class SimpleMessageApp < PlainTextApp
 
   def initialize(message)
     @message = message
   end
 
-  def call(env)
-    ["200 OK", { "Content-type" => "text/plain" }, @message.dup]
-  end
-
+  attr_reader :message
+  
 end
 
-class BIFF
+class EnvRecordingApp < PlainTextApp
+  
+  def call(env)
+    @last_env = env
+    super
+  end
+
+  attr_reader :last_env
+
+  def message
+    "env stored for later perusal"
+  end
+  
+end
+
+class BiffFilter
 
   def initialize(app)
     @app = app
@@ -25,7 +53,8 @@ class BIFF
 
   def call(env)
     status, headers, body = @app.call(env)
-    [status, headers, body.upcase]
+    upcased_body = Array(body).map { |x| x.upcase }
+    [status, headers, upcased_body]
   end
 
 end
@@ -39,7 +68,7 @@ describe ShamRack do
   describe "mounted Rack application" do
     
     before(:each) do
-      ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
+      ShamRack.mount(SimpleMessageApp.new("Hello, world"), "www.test.xyz")
     end
 
     it "can be accessed using Net::HTTP" do
@@ -67,8 +96,8 @@ describe ShamRack do
 
     it "mounts an app created using Rack::Builder" do
       ShamRack.rackup("rackup.xyz") do
-        use BIFF
-        run PlainApp.new("Racked!")
+        use BiffFilter
+        run SimpleMessageApp.new("Racked!")
       end
 
       open("http://rackup.xyz").read.should == "RACKED!"
@@ -103,29 +132,32 @@ describe ShamRack do
 
   end
 
-  it "provides a Rack environment" do
+  it "provides a valid Rack environment" do
 
-    ShamRack.lambda("env.xyz") do |env|
-      @env = env
-      ["200 OK", {}, ""]
+    env_recorder = EnvRecordingApp.new
+    
+    ShamRack.rackup("env.xyz") do |env|
+      use Rack::Lint
+      run env_recorder
     end
 
-    open("http://env.xyz/blah?q=abc")
+    RestClient.get("http://env.xyz/blah?q=abc")
 
-    @env["REQUEST_METHOD"].should == "GET"
-    @env["SCRIPT_NAME"].should == ""
-    @env["PATH_INFO"].should == "/blah"
-    @env["QUERY_STRING"].should == "q=abc"
-    @env["SERVER_NAME"].should == "env.xyz"
-    @env["SERVER_PORT"].should == "80"
+    env = env_recorder.last_env
 
-    @env["rack.version"].should == [0,1]
-    @env["rack.url_scheme"].should == "http"
-    # rack.input: See below, the input stream.
-    # rack.errors:  See below, the error stream.
-    @env["rack.multithread"].should == true
-    @env["rack.multiprocess"].should == true
-    @env["rack.run_once"].should == false
+    env["REQUEST_METHOD"].should == "GET"
+    env["SCRIPT_NAME"].should == ""
+    env["PATH_INFO"].should == "/blah"
+    env["QUERY_STRING"].should == "q=abc"
+    env["SERVER_NAME"].should == "env.xyz"
+    env["SERVER_PORT"].should == "80"
+    
+    env["rack.version"].should == [0,1]
+    env["rack.url_scheme"].should == "http"
+    
+    env["rack.multithread"].should == true
+    env["rack.multiprocess"].should == true
+    env["rack.run_once"].should == false
 
   end
 
