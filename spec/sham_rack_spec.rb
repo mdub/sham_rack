@@ -37,18 +37,25 @@ describe ShamRack do
   end
 
   describe "mounted Rack application" do
-
-    it "can be accessed using open-uri" do
+    
+    before(:each) do
       ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
+    end
 
+    it "can be accessed using Net::HTTP" do
+      response = Net::HTTP.start("www.test.xyz") do |http|
+        http.request(Net::HTTP::Get.new("/"))
+      end
+      response.body.should == "Hello, world"
+    end
+    
+    it "can be accessed using open-uri" do
       response = open("http://www.test.xyz")
       response.status.should == ["200", "OK"]
       response.read.should == "Hello, world"
     end
 
     it "can be accessed using RestClient" do
-      ShamRack.mount(PlainApp.new("Hello, world"), "www.test.xyz")
-
       response = RestClient.get("http://www.test.xyz")
       response.code.should == 200
       response.to_s.should == "Hello, world"
@@ -119,6 +126,18 @@ describe ShamRack do
     @env["rack.multithread"].should == true
     @env["rack.multiprocess"].should == true
     @env["rack.run_once"].should == false
+
   end
 
+  it "provides access to request headers" do
+    
+    pending
+    
+    ShamRack.lambda("env.xyz") do |env|
+      @env = env
+      ["200 OK", {}, ""]
+    end
+
+  end
+  
 end
