@@ -139,16 +139,15 @@ describe ShamRack do
 
   it "provides a valid Rack environment" do
 
-    env_recorder = EnvRecordingApp.new
+    recorder = EnvRecordingApp.new
     
-    ShamRack.rackup("env.xyz") do |env|
+    ShamRack.rackup("env.xyz") do
       use Rack::Lint
-      run env_recorder
+      run recorder
     end
 
     RestClient.get("http://env.xyz/blah?q=abc")
-
-    env = env_recorder.last_env
+    env = recorder.last_env
 
     env["REQUEST_METHOD"].should == "GET"
     env["SCRIPT_NAME"].should == ""
@@ -168,10 +167,8 @@ describe ShamRack do
 
   it "provides access to request headers" do
     
-    ShamRack.lambda("env.xyz") do |env|
-      @env = env
-      ["200 OK", {}, ""]
-    end
+    recorder = EnvRecordingApp.new
+    ShamRack.mount(recorder, "env.xyz") 
 
     Net::HTTP.start("env.xyz") do |http|
       request = Net::HTTP::Get.new("/")
@@ -179,7 +176,7 @@ describe ShamRack do
       http.request(request)
     end
 
-    @env["HTTP_FOO_BAR"].should == "baz"
+    recorder.last_env["HTTP_FOO_BAR"].should == "baz"
     
   end
   
