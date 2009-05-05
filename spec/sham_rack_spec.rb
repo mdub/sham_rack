@@ -12,7 +12,7 @@ class PlainApp
   end
 
   def call(env)
-    ["200 OK", { "Content-type" => "text/plain" }, @message.dup ]
+    ["200 OK", { "Content-type" => "text/plain" }, @message.dup]
   end
 
 end

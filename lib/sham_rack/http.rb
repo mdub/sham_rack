@@ -16,12 +16,18 @@ module ShamRack
     attr_accessor :use_ssl, :verify_mode, :read_timeout, :open_timeout
     
     def request(req, body = nil)
-      uri = URI.parse(req.path)
-      env = {
+      env = default_env.merge(path_env(req.path)).merge(header_env(req))
+      response = build_response(@rack_app.call(env))
+      yield response if block_given?
+      return response
+    end
+    
+    private
+
+    def default_env
+      {
         "REQUEST_METHOD" => "GET",
         "SCRIPT_NAME" => "",
-        "PATH_INFO" => uri.path,
-        "QUERY_STRING" => (uri.query || ""),
         "SERVER_NAME" => @address,
         "SERVER_PORT" => @port.to_s,   
         "rack.version" => [0,1],
@@ -30,15 +36,23 @@ module ShamRack
         "rack.multiprocess" => true,
         "rack.run_once" => false
       }
-      req.each do |header, content|
-        env["HTTP_" + header.upcase.gsub('-', '_')] = content
-      end
-      response = build_response(@rack_app.call(env))
-      yield response if block_given?
-      response
     end
     
-    private
+    def path_env(path)
+      uri = URI.parse(path)
+      {
+        "PATH_INFO" => uri.path,
+        "QUERY_STRING" => (uri.query || ""),
+      }
+    end
+    
+    def header_env(request)
+      result = {}
+      request.each do |header, content|
+        result["HTTP_" + header.upcase.gsub('-', '_')] = content
+      end
+      return result
+    end
     
     def build_response(rack_response)
       status, headers, body = rack_response
@@ -47,13 +61,13 @@ module ShamRack
       response.instance_variable_set(:@body, assemble_body(body))
       response.instance_variable_set(:@read, true)
       response.extend ShamRack::ResponseExtensions
-      response
+      return response
     end
 
     def assemble_body(body)
       content = ""
       body.each { |fragment| content << fragment }
-      content
+      return content
     end
     
   end
@@ -63,7 +77,7 @@ module ShamRack
     def read_body(dest = nil)
       yield @body if block_given?
       dest << @body if dest
-      @body
+      return @body
     end
     
   end
