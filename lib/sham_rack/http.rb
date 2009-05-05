@@ -30,6 +30,9 @@ module ShamRack
         "rack.multiprocess" => true,
         "rack.run_once" => false
       }
+      req.each do |header, content|
+        env["HTTP_" + header.upcase.gsub('-', '_')] = content
+      end
       response = build_response(@rack_app.call(env))
       yield response if block_given?
       response

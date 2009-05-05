@@ -131,13 +131,19 @@ describe ShamRack do
 
   it "provides access to request headers" do
     
-    pending
-    
     ShamRack.lambda("env.xyz") do |env|
       @env = env
       ["200 OK", {}, ""]
     end
 
+    Net::HTTP.start("env.xyz") do |http|
+      request = Net::HTTP::Get.new("/")
+      request["Foo-bar"] = "baz"
+      http.request(request)
+    end
+
+    @env["HTTP_FOO_BAR"].should == "baz"
+    
   end
   
 end
