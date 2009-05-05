@@ -11,10 +11,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "sham_rack"
-    gemspec.summary = "plumbs Net::HTTP into Rack for quick and easy HTTP testing"
+    gemspec.summary = "Net::HTTP-to-Rack plumbing"
     gemspec.email = "mdub@dogbiscuit.org"
     gemspec.homepage = "http://github.com/mdub/sham_rack"
-    gemspec.description = "TODO"
+    gemspec.description = "ShamRack plumbs Net::HTTP directly into Rack, for quick and easy HTTP testing."
     gemspec.authors = ["Mike Williams"]
   end
 rescue LoadError
