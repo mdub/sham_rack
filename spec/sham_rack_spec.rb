@@ -120,7 +120,6 @@ describe ShamRack do
   describe "#sinatra" do
 
     it "mounts associated block as a Sinatra app" do
-      pending
       ShamRack.sinatra("sinatra.xyz") do
         get "/hello/:subject" do
           "Hello, #{params[:subject]}"
