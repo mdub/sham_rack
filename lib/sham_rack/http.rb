@@ -16,8 +16,10 @@ module ShamRack
     attr_accessor :use_ssl, :verify_mode, :read_timeout, :open_timeout
     
     def request(req, body = nil)
+      # debugger
       env = default_env
       env.merge!(path_env(req.path))
+      env.merge!(method_env(req))
       env.merge!(header_env(req))
       env.merge!(io_env(req))
       response = build_response(@rack_app.call(env))
@@ -29,7 +31,6 @@ module ShamRack
 
     def default_env
       {
-        "REQUEST_METHOD" => "GET",
         "SCRIPT_NAME" => "",
         "SERVER_NAME" => @address,
         "SERVER_PORT" => @port.to_s,   
@@ -41,9 +42,15 @@ module ShamRack
       }
     end
     
+    def method_env(request)
+      {
+        "REQUEST_METHOD" => request.method
+      }
+    end
+    
     def io_env(request)
       { 
-        "rack.input" => StringIO.new(""),
+        "rack.input" => StringIO.new(request.body || ""),
         "rack.errors" => $stderr
       }
     end
@@ -60,6 +67,9 @@ module ShamRack
       result = {}
       request.each do |header, content|
         result["HTTP_" + header.upcase.gsub('-', '_')] = content
+      end
+      %w(TYPE LENGTH).each do |x|
+        result["CONTENT_#{x}"] = result.delete("HTTP_CONTENT_#{x}") if result.has_key?("HTTP_CONTENT_#{x}")
       end
       return result
     end

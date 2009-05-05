@@ -150,7 +150,7 @@ describe ShamRack do
 
     it "is valid" do
 
-      RestClient.get("http://env.xyz/blah?q=abc")
+      open("http://env.xyz/blah?q=abc")
 
       env["REQUEST_METHOD"].should == "GET"
       env["SCRIPT_NAME"].should == ""
@@ -180,11 +180,15 @@ describe ShamRack do
 
     end
 
-    # it "provides access to POST body" do
-    #   
-    #   RestClient.post()
-    #   
-    # end
+    it "provides access to POST body" do
+
+      Net::HTTP.post_form(URI.parse("http://env.xyz/resource"), "q" => "rack")
+
+      env["REQUEST_METHOD"].should == "POST"
+      env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
+      env["rack.input"].read.should == "q=rack"
+      
+    end
 
   end
 
