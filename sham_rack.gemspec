@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sham_rack}
-  s.version = "0.1.0"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Williams"]
-  s.date = %q{2009-05-05}
+  s.date = %q{2009-05-06}
   s.description = %q{ShamRack plumbs Net::HTTP directly into Rack, for quick and easy HTTP testing.}
   s.email = %q{mdub@dogbiscuit.org}
   s.extra_rdoc_files = [
