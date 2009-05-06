@@ -59,6 +59,7 @@ Thanks to
 ---------
 
 * Blaine Cook for [FakeWeb][fakeweb], which was an inspiration for ShamRack.
+* Perryn Fowler for his efforts plumbing Net::HTTP into ActionController::TestProcess.
 * Christian Neukirchen et al for the chewy goodness that is [Rack][rack].
 
 [rack]: http://rack.rubyforge.org/
