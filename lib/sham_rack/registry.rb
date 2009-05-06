@@ -8,6 +8,7 @@ module ShamRack
     end
     
     def rackup(address, port = nil, &block)
+      require "rack"
       app = Rack::Builder.new(&block).to_app
       mount(app, address, port)
     end
