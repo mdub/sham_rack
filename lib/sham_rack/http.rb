@@ -8,6 +8,8 @@ module ShamRack
       @port = port
       @rack_app = rack_app
     end
+
+    attr_reader :address, :port, :rack_app
     
     def start
       yield self
