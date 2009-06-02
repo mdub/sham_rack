@@ -23,17 +23,20 @@ Installing it
 Using it
 --------
 
+### A simple inline application
+
     require 'sham_rack'
-    
-    rack_app = lambda { |env| ["200 OK", { "Content-type" => "text/plain" }, "Hello, world!"] }
-    ShamRack.mount(rack_app, "www.example.com")
+
+    ShamRack.at("www.example.com") do |env|
+      ["200 OK", { "Content-type" => "text/plain" }, "Hello, world!"]
+    end
       
     require 'open-uri'
     open("http://www.example.com/").read            #=> "Hello, world!"
 
 ### Sinatra integration
 
-    ShamRack.sinatra("sinatra.xyz") do
+    ShamRack.at("sinatra.xyz").sinatra do
       get "/hello/:subject" do
         "Hello, #{params[:subject]}"
       end
@@ -43,11 +46,15 @@ Using it
 
 ### Rackup support
 
-    ShamRack.rackup("rackup.xyz") do
+    ShamRack.at("rackup.xyz").rackup do
       use Some::Middleware
       use Some::Other::Middleware
       run MyApp.new
     end
+
+### Any old app
+
+    ShamRack.mount(my_google_stub, "google.com")
 
 What's the catch?
 -----------------

@@ -89,46 +89,50 @@ describe ShamRack do
 
   end
 
-  describe "#rackup" do
+  describe "#at" do
 
-    it "mounts an app created using Rack::Builder" do
+    describe "with a block" do
 
-      ShamRack.rackup("rackup.xyz") do
-        use UpcaseBody
-        run SimpleMessageApp.new("Racked!")
-      end
+      it "mounts associated block as an app" do
 
-      open("http://rackup.xyz").read.should == "RACKED!"
-
-    end
-
-  end
-
-  describe "#lambda" do
-
-    it "mounts associated block as an app" do
-
-      ShamRack.lambda("simple.xyz") do |env|
-        ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?"]
-      end
-
-      open("http://simple.xyz").read.should == "Easy, huh?"
-
-    end
-
-  end
-
-  describe "#sinatra" do
-
-    it "mounts associated block as a Sinatra app" do
-
-      ShamRack.sinatra("sinatra.xyz") do
-        get "/hello/:subject" do
-          "Hello, #{params[:subject]}"
+        ShamRack.at("simple.xyz") do |env|
+          ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?"]
         end
+
+        open("http://simple.xyz").read.should == "Easy, huh?"
+
       end
 
-      open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
+    end
+
+    describe "#rackup" do
+
+      it "mounts an app created using Rack::Builder" do
+
+        ShamRack.at("rackup.xyz").rackup do
+          use UpcaseBody
+          run SimpleMessageApp.new("Racked!")
+        end
+
+        open("http://rackup.xyz").read.should == "RACKED!"
+
+      end
+
+    end
+
+    describe "#sinatra" do
+
+      it "mounts associated block as a Sinatra app" do
+
+        ShamRack.at("sinatra.xyz").sinatra do
+          get "/hello/:subject" do
+            "Hello, #{params[:subject]}"
+          end
+        end
+
+        open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
+
+      end
 
     end
 
@@ -138,7 +142,7 @@ describe ShamRack do
 
     before(:each) do
       @env_recorder = recorder = EnvRecordingApp.new
-      ShamRack.rackup("env.xyz") do
+      ShamRack.at("env.xyz").rackup do
         use Rack::Lint
         run recorder
       end
