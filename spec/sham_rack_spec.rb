@@ -107,33 +107,41 @@ describe ShamRack do
 
     describe "#rackup" do
 
-      it "mounts an app created using Rack::Builder" do
-
-        ShamRack.at("rackup.xyz").rackup do
+      before do
+        @return_value = ShamRack.at("rackup.xyz").rackup do
           use UpcaseBody
           run SimpleMessageApp.new("Racked!")
         end
+      end
 
+      it "mounts an app created using Rack::Builder" do
         open("http://rackup.xyz").read.should == "RACKED!"
+      end
 
+      it "returns the app" do
+        @return_value.should respond_to(:call)
       end
 
     end
 
     describe "#sinatra" do
 
-      it "mounts associated block as a Sinatra app" do
-
-        ShamRack.at("sinatra.xyz").sinatra do
+      before do
+        @return_value = ShamRack.at("sinatra.xyz").sinatra do
           get "/hello/:subject" do
             "Hello, #{params[:subject]}"
           end
         end
-
+      end
+      
+      it "mounts associated block as a Sinatra app" do
         open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
-
       end
 
+      it "returns the app" do
+        @return_value.should respond_to(:call)
+      end
+      
     end
 
   end
