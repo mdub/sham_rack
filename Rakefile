@@ -34,7 +34,7 @@ Rake::RDocTask.new do |rdoc|
   end
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "food #{version}"
-  rdoc.rdoc_files.include('README*')
+  rdoc.title = "ShamRack #{version}"
+  rdoc.main = "ShamRack"
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
