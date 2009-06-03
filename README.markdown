@@ -1,14 +1,14 @@
 ShamRack
 ========
 
-ShamRack plumbs Net:HTTP into [Rack][rack], providing infrastructure for testing arbitrary Rack-based apps using arbitrary HTTP clients, all from the comfort of your own Ruby VM.
+ShamRack plumbs Net:HTTP into [Rack][rack].
 
 What's it for, again?
 ---------------------
 
-Well, you can _test your HTTP client code_, using ShamRack to fake out an external web-service ([Sinatra][sinatra] helps, here).
+Well, you can _test your HTTP client code_, using ShamRack to stub out an external web-service. Think of it as [FakeWeb][fakeweb] on steriods.
 
-Or, you can `ShamRack.mount` your actual Sinatra/Rails/Merb/Rack app, which is handy if you want to _test access using an HTTP client library_ such as:
+Or, you can _test your Rack application_ (or Sinatra, or Rails, or Merb) using arbitrary HTTP client libraries, to check interoperability. For instance, you could hit a local app using:
 
 * [`rest-client`][rest-client]
 * [`httparty`][httparty]
