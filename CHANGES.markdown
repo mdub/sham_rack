@@ -1,6 +1,7 @@
 ## 5-Jun-2009 [mdub@dogbiscuit.org]
 
 * Add support for Net::HTTP.get_response.
+* Pass back headers provided by Rack app in the HTTPResponse.
 
 ## 3-Jun-2009 [mdub@dogbiscuit.org]
 

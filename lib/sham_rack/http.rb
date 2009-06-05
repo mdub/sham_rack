@@ -100,6 +100,9 @@ module ShamRack
       response = Net::HTTPResponse.send(:response_class, code).new("Sham", code, message)
       response.instance_variable_set(:@body, assemble_body(body))
       response.instance_variable_set(:@read, true)
+      headers.each do |k,v|
+        response.add_field(k, v)
+      end
       response.extend ShamRack::ResponseExtensions
       return response
     end

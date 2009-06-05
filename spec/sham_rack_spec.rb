@@ -94,6 +94,37 @@ describe ShamRack do
 
   end
 
+  describe "response" do
+    
+    before(:each) do
+      ShamRack.at("www.test.xyz") do
+        [
+          "201 Created", 
+          { "Content-Type" => "text/plain", "X-Foo" => "bar" },
+          "BODY"
+        ]
+      end
+      @response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
+    end
+    
+    it "has status returned by app" do
+      @response.code.should == "201"
+    end
+
+    it "has body returned by app" do
+      @response.body.should == "BODY"
+    end
+    
+    it "has Content-Type returned by app" do
+      @response.content_type.should == "text/plain"
+    end
+    
+    it "has other headers returned by app" do
+      @response["x-foo"].should =="bar"
+    end
+    
+  end
+  
   describe "#at" do
 
     describe "with a block" do
