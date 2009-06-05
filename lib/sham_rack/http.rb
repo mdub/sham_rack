@@ -29,6 +29,22 @@ module ShamRack
       return response
     end
     
+    def request_get(path, initheader = nil, &block)
+      request Net::HTTP::Get.new(path, initheader), &block
+    end
+
+    def request_head(path, initheader = nil, &block)
+      request Net::HTTP::Head.new(path, initheader), &block
+    end
+
+    def request_post(path, data, initheader = nil, &block)
+      request Net::HTTP::Post.new(path, initheader), data, &block
+    end
+
+    def request_put(path, data, initheader = nil, &block) 
+      request Net::HTTP::Put.new(path, initheader), data, &block
+    end
+
     private
 
     def default_env

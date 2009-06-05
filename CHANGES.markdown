@@ -1,3 +1,7 @@
+## 5-Jun-2009 [mdub@dogbiscuit.org]
+
+* Add support for Net::HTTP.get_response.
+
 ## 3-Jun-2009 [mdub@dogbiscuit.org]
 
 * Introduced ShamRack#at to simplify registration of apps.

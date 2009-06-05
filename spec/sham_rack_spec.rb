@@ -75,6 +75,11 @@ describe ShamRack do
       response.body.should == "Hello, world"
     end
 
+    it "can be accessed using Net::HTTP#get_response" do
+      response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
+      response.body.should == "Hello, world"
+    end
+
     it "can be accessed using open-uri" do
       response = open("http://www.test.xyz")
       response.status.should == ["200", "OK"]
