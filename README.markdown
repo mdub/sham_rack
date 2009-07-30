@@ -6,13 +6,15 @@ ShamRack plumbs Net:HTTP into [Rack][rack].
 What's it for, again?
 ---------------------
 
-Well, you can _test your HTTP client code_, using ShamRack to stub out an external web-service. Think of it as [FakeWeb][fakeweb] on steriods.
+Well, it makes it easy to _stubbing out external (HTTP) services_, which is handy in development and testing environments, or when you want to _test your HTTP client code_.
 
-Or, you can _test your Rack application_ (or Sinatra, or Rails, or Merb) using arbitrary HTTP client libraries, to check interoperability. For instance, you could hit a local app using:
+You can also use it to _test your Rack application_ (or Sinatra, or Rails, or Merb) using arbitrary HTTP client libraries, to check interoperability. For instance, you could test your app using:
 
 * [`rest-client`][rest-client]
 * [`httparty`][httparty]
 * [`oauth`][oauth]
+
+all without having to boot it in a server.
 
 Installing it
 -------------
