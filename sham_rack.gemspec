@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "lib/sham_rack/core_ext/net/http.rb",
      "lib/sham_rack/http.rb",
      "lib/sham_rack/registry.rb",
+     "lib/sham_rack/version.rb",
      "sham_rack.gemspec",
      "spec/sham_rack_spec.rb",
      "spec/spec_helper.rb"
