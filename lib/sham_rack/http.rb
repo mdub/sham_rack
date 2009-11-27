@@ -6,9 +6,6 @@ module ShamRack
 
       attr_accessor :rack_app
 
-      attr_accessor :read_timeout, :open_timeout
-      attr_accessor :use_ssl,:key, :cert, :ca_file, :ca_path, :verify_mode, :verify_callback, :verify_depth, :cert_store
-
       def start
         yield self
       end
