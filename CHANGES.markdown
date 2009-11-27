@@ -1,3 +1,7 @@
+## 27-Nov-2009 [mdub@dogbiscuit.org]
+
+* Change of approach: extend rather than reimplement Net:HTTP.  This should improve coverage of all the weird and wonderful ways of using the Net:HTTP API.
+
 ## 5-Jun-2009 [mdub@dogbiscuit.org]
 
 * Add support for Net::HTTP.get_response.

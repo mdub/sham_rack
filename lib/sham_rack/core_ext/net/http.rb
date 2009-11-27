@@ -2,16 +2,19 @@ require "net/http"
 require "sham_rack/registry"
 require "sham_rack/http"
 
-module Net
+class << Net::HTTP  
 
-  def HTTP.new(address, port = nil, *proxy_args)
-    port ||= HTTP.default_port
+  alias :new_without_shamrack :new
+  
+  def new(address, port = nil, *proxy_args)
+    port ||= Net::HTTP.default_port
     rack_app = ShamRack.application_for(address, port)
+    http_object = new_without_shamrack(address, port, *proxy_args)
     if rack_app
-      ShamRack::HTTP.new(address, port, rack_app)
-    else
-      super(address, port, *proxy_args)
+      http_object.extend(ShamRack::HTTP::Extensions)
+      http_object.rack_app = rack_app
     end
+    http_object
   end
 
 end

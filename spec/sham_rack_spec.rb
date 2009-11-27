@@ -238,6 +238,17 @@ describe ShamRack do
 
     end
 
+    it "supports POST using Net::HTTP" do
+
+      Net::HTTP.start("env.xyz") do |http|
+        http.post("/resource", "q=rack")
+      end
+
+      env["REQUEST_METHOD"].should == "POST"
+      env["rack.input"].read.should == "q=rack"
+
+    end
+
     it "supports PUT" do
 
       RestClient.put("http://env.xyz/thing1", "stuff", :content_type => "text/plain")
