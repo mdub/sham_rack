@@ -5,3 +5,4 @@
 module ShamRack; end
 
 require "sham_rack/core_ext/net/http"
+require "sham_rack/version"

@@ -1,6 +1,5 @@
 module ShamRack
 
-  # a sham version of Net::HTTP
   module HTTP
 
     module Extensions
