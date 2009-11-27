@@ -19,8 +19,7 @@ all without having to boot it in a server.
 Installing it
 -------------
 
-    gem sources -a http://gems.github.com
-    sudo gem install mdub-sham_rack
+    gem install sham_rack
 
 Using it
 --------
@@ -61,7 +60,6 @@ Using it
 What's the catch?
 -----------------
 
-* It's brand new! (there will be dragons)
 * Your Rack request-handling code runs in the same Ruby VM, in fact the same Thread, as your request.
 
 Thanks to
