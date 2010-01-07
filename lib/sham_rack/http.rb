@@ -46,7 +46,7 @@ module ShamRack
         raise(ArgumentError, "both request.body and body argument were provided") if (request.body && body)
         body ||= request.body || ""
         { 
-          "rack.input" => StringIO.new(body),
+          "rack.input" => StringIO.new(body.to_s),
           "rack.errors" => $stderr
         }
       end
