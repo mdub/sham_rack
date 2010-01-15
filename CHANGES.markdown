@@ -1,3 +1,7 @@
+## 15-Jan-2010 [jeremy.burks@gmail.com]
+
+* Fix an incompatibility with rest-client 1.2.0.
+
 ## 27-Nov-2009 [mdub@dogbiscuit.org]
 
 * Change of approach: extend rather than reimplement Net:HTTP.  This should improve coverage of all the weird and wonderful ways of using the Net:HTTP API.
