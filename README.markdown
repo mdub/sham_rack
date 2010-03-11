@@ -57,6 +57,17 @@ Using it
 
     ShamRack.mount(my_google_stub, "google.com")
 
+### General-purpose stubbing
+
+    @stub_app = ShamRack.at("stubbed.com").stub
+    
+    open("http://stubbed.com/greeting").read       #=> OpenURI::HTTPError: 404
+
+    @stub_app.register_resource("/greeting", "Hello, world!", "text/plain")
+
+    open("http://stubbed.com/greeting").read       #=> "Hello, world!"
+    @stub_app.last_request.path                    #=> "/greeting"
+
 What's the catch?
 -----------------
 
