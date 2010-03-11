@@ -125,7 +125,7 @@ describe ShamRack do
     
   end
   
-  describe "#at" do
+  describe ".at" do
 
     describe "with a block" do
 
@@ -180,6 +180,22 @@ describe ShamRack do
       
     end
 
+    describe "#stub" do
+      
+      before do
+        @return_value = ShamRack.at("stubbed.xyz").stub
+      end
+
+      it "mounts a StubWebService" do
+        ShamRack.application_for("stubbed.xyz").should be_kind_of(ShamRack::StubWebService)
+      end
+      
+      it "returns the StubWebService" do
+        @return_value.should == ShamRack.application_for("stubbed.xyz")
+      end
+      
+    end
+    
   end
 
   describe "Rack environment" do

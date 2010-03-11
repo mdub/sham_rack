@@ -54,6 +54,11 @@ module ShamRack
       ShamRack.mount(sinatra_app.new, @address, @port)
     end
 
+    def stub
+      require "sham_rack/stub_web_service"
+      ShamRack.mount(StubWebService.new, @address, @port)
+    end
+    
   end
 
 end
