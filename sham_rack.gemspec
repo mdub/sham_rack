@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sham_rack}
-  s.version = "1.2.1"
+  s.version = "1.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Williams"]
-  s.date = %q{2010-01-15}
+  s.date = %q{2010-03-11}
   s.description = %q{ShamRack plumbs Net::HTTP directly into Rack, for quick and easy HTTP testing.}
   s.email = %q{mdub@dogbiscuit.org}
   s.extra_rdoc_files = [
@@ -26,8 +26,10 @@ Gem::Specification.new do |s|
      "lib/sham_rack/core_ext/net/http.rb",
      "lib/sham_rack/http.rb",
      "lib/sham_rack/registry.rb",
+     "lib/sham_rack/stub_web_service.rb",
      "lib/sham_rack/version.rb",
      "sham_rack.gemspec",
+     "spec/sham_rack/stub_web_service_spec.rb",
      "spec/sham_rack_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -38,7 +40,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Net::HTTP-to-Rack plumbing}
   s.test_files = [
-    "spec/sham_rack_spec.rb",
+    "spec/sham_rack/stub_web_service_spec.rb",
+     "spec/sham_rack_spec.rb",
      "spec/spec_helper.rb"
   ]
 
