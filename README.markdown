@@ -60,13 +60,12 @@ Using it
 ### General-purpose stubbing
 
     @stub_app = ShamRack.at("stubbed.com").stub
-    
-    open("http://stubbed.com/greeting").read       #=> OpenURI::HTTPError: 404
-
     @stub_app.register_resource("/greeting", "Hello, world!", "text/plain")
-
+    
     open("http://stubbed.com/greeting").read       #=> "Hello, world!"
     @stub_app.last_request.path                    #=> "/greeting"
+
+Or, just use Sinatra, as described above ... it's almost as succinct, and heaps more powerful.
 
 What's the catch?
 -----------------
