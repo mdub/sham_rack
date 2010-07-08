@@ -7,7 +7,11 @@ module ShamRack
       attr_accessor :rack_app
 
       def start
-        yield self
+        if block_given?
+          yield self 
+        else
+          self
+        end
       end
 
       def request(req, body = nil)

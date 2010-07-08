@@ -3,6 +3,7 @@ require "spec_helper"
 require "sham_rack"
 require "open-uri"
 require "restclient"
+require "mechanize"
 require "rack"
 
 class PlainTextApp
@@ -90,6 +91,11 @@ describe ShamRack do
       response = RestClient.get("http://www.test.xyz")
       response.code.should == 200
       response.to_s.should == "Hello, world"
+    end
+
+    it "can be accessed using WWW::Mechanize" do
+      response = Mechanize.new.get("http://www.test.xyz")
+      response.body.should == "Hello, world"
     end
 
   end
