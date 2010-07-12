@@ -1,3 +1,7 @@
+## 08-Jul-2010 [jyurek@thoughtbot.com]
+
+* Add support for Mechanize.
+
 ## 11-Mar-2010 [mdub@dogbiscuit.org]
 
 * Added generic `StubWebService`.
