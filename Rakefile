@@ -1,8 +1,6 @@
 require "rubygems"
 require "rake"
 
-require File.dirname(__FILE__) + "/lib/sham_rack/version.rb"
-
 require "spec/rake/spectask"
 
 task "default" => "spec"
