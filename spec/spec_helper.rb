@@ -1,7 +1,6 @@
 require "rubygems"
 require "spec"
 require "rr"
-require "ruby-debug"
 
 project_root = File.expand_path("#{__FILE__}/../..")
 $LOAD_PATH << "#{project_root}/lib"
