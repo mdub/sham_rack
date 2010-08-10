@@ -1,7 +1,26 @@
+require "net/http"
+require "sham_rack/registry"
+
+class << Net::HTTP  
+
+  alias :new_without_sham_rack :new
+  
+  def new(address, port = nil, *proxy_args)
+    port ||= Net::HTTP.default_port
+    rack_app = ShamRack.application_for(address, port)
+    http_object = new_without_sham_rack(address, port, *proxy_args)
+    if rack_app
+      http_object.extend(ShamRack::NetHttp::Extensions)
+      http_object.rack_app = rack_app
+    end
+    http_object
+  end
+
+end
+
 module ShamRack
-
-  module HTTP
-
+  module NetHttp
+    
     module Extensions
 
       attr_accessor :rack_app
@@ -83,7 +102,7 @@ module ShamRack
         headers.each do |k,v|
           response.add_field(k, v)
         end
-        response.extend ShamRack::ResponseExtensions
+        response.extend ShamRack::NetHttp::ResponseExtensions
         return response
       end
 
@@ -95,14 +114,14 @@ module ShamRack
 
     end
 
-  end
+    module ResponseExtensions
 
-  module ResponseExtensions
+      def read_body(dest = nil)
+        yield @body if block_given?
+        dest << @body if dest
+        return @body
+      end
 
-    def read_body(dest = nil)
-      yield @body if block_given?
-      dest << @body if dest
-      return @body
     end
 
   end
