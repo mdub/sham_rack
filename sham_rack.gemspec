@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
 
   gem.rubyforge_project = "shamrack"
 
-  gem.version = ShamRack::VERSION
+  gem.version = ShamRack::VERSION.dup
   gem.platform = Gem::Platform::RUBY
 
   gem.require_path = "lib"
