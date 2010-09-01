@@ -1,3 +1,7 @@
+## 02-Sep-2010 [mdub@dogbiscuit.org]
+
+* Fixes to support Ruby-1.9.x.
+
 ## 08-Jul-2010 [jyurek@thoughtbot.com]
 
 * Add support for Mechanize.
