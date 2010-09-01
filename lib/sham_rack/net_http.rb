@@ -68,8 +68,10 @@ module ShamRack
       def io_env(request, body)
         raise(ArgumentError, "both request.body and body argument were provided") if (request.body && body)
         body ||= request.body || ""
+        body = body.to_s
+        body = body.encode("ASCII-8BIT") if body.respond_to?(:encode)
         { 
-          "rack.input" => StringIO.new(body.to_s),
+          "rack.input" => StringIO.new(body),
           "rack.errors" => $stderr
         }
       end
