@@ -1,7 +1,12 @@
 source "http://rubygems.org"
 
+gem "rack"
+
 group :test do
-  gem "rack"
+  gem "rake"
+  gem "rspec"
+  gem "rr", "~> 1.0"
+  gem "rack-test"
   gem "sinatra"
   gem "rest-client"
   gem "mechanize"

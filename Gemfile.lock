@@ -1,0 +1,30 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    mechanize (1.0.0)
+      nokogiri (>= 1.2.1)
+    mime-types (1.16)
+    nokogiri (1.4.3.1)
+    rack (1.2.1)
+    rack-test (0.5.4)
+      rack (>= 1.0)
+    rake (0.8.7)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
+    rr (1.0.0)
+    rspec (1.3.0)
+    sinatra (1.0)
+      rack (>= 1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mechanize
+  rack
+  rack-test
+  rake
+  rest-client
+  rr (~> 1.0)
+  rspec
+  sinatra
