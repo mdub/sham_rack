@@ -107,7 +107,7 @@ describe ShamRack do
         [
           "201 Created", 
           { "Content-Type" => "text/plain", "X-Foo" => "bar" },
-          "BODY"
+          ["BODY"]
         ]
       end
       @response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
@@ -138,7 +138,7 @@ describe ShamRack do
       it "mounts associated block as an app" do
 
         ShamRack.at("simple.xyz") do |env|
-          ["200 OK", { "Content-type" => "text/plain" }, "Easy, huh?"]
+          ["200 OK", { "Content-type" => "text/plain" }, ["Easy, huh?"]]
         end
 
         open("http://simple.xyz").read.should == "Easy, huh?"

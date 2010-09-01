@@ -43,11 +43,11 @@ describe ShamRack::StubWebService do
     before(:each) do
       
       @app.handle do |request|
-        [200, {}, "response from first handler"] if request.get?
+        [200, {}, ["response from first handler"]] if request.get?
       end
 
       @app.handle do |request|
-        [200, {}, "response from second handler"] if request.path_info == "/stuff"
+        [200, {}, ["response from second handler"]] if request.path_info == "/stuff"
       end
       
     end

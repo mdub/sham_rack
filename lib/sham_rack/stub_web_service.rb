@@ -32,7 +32,7 @@ module ShamRack
         unless request.query_string.to_s.empty?
           request_path += "?" + request.query_string
         end
-        [status, {"Content-Type" => content_type}, content] if request_path == path
+        [status, {"Content-Type" => content_type}, [content]] if request_path == path
       end
     end
 
@@ -43,7 +43,7 @@ module ShamRack
     protected
 
     def default_response
-      [404, {"Content-Type" => "text/plain"}, "Not found"]
+      [404, {"Content-Type" => "text/plain"}, ["Not found"]]
     end
 
   end
