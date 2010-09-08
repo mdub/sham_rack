@@ -67,6 +67,12 @@ Using it
 
 Or, just use Sinatra, as described above ... it's almost as succinct, and heaps more powerful.
 
+### When you're done testing
+
+	ShamRack.unmount_all
+
+    open("http://stubbed.com/greeting").read       #=> OpenURI::HTTPError
+
 What's the catch?
 -----------------
 
