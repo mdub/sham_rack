@@ -1,6 +1,7 @@
 require "spec_helper"
 
 require "sham_rack"
+require "sham_rack/patron"
 require "open-uri"
 require "restclient"
 require "mechanize"
@@ -42,8 +43,15 @@ describe ShamRack do
       response.to_s.should == "Hello, world"
     end
 
-    it "can be accessed using WWW::Mechanize" do
+    it "can be accessed using Mechanize" do
       response = Mechanize.new.get("http://www.test.xyz")
+      response.body.should == "Hello, world"
+    end
+
+    it "can be accessed using Patron" do
+      session = Patron::Session.new
+      session.base_url = "http://www.test.xyz"
+      response = session.get("/foo/bar")
       response.body.should == "Hello, world"
     end
 

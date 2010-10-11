@@ -10,4 +10,5 @@ group :test do
   gem "sinatra"
   gem "rest-client"
   gem "mechanize"
+  gem "patron"
 end
