@@ -32,10 +32,11 @@ module Patron
 
     def patron_response(rack_response)
       status, headers, body = rack_response
+      status_code = Rack::Utils::HTTP_STATUS_CODES[status.to_i]
       res = Patron::Response.new
       res.instance_variable_set(:@status, status)
+      res.instance_variable_set(:@status_line, "HTTP/1.1 #{status} #{status_code}")
       res.instance_variable_set(:@body, assemble_body(body))
-      # res.instance_variable_set(:@status_line, webmock_response.status[1])
       # res.instance_variable_set(:@headers, webmock_response.headers)
       res
     end
