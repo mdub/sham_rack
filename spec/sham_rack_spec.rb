@@ -49,9 +49,8 @@ describe ShamRack do
     end
 
     it "can be accessed using Patron" do
-      session = Patron::Session.new
-      session.base_url = "http://www.test.xyz"
-      response = session.get("/foo/bar")
+      patron = Patron::Session.new
+      response = patron.get("http://www.test.xyz/foo/bar")
       response.body.should == "Hello, world"
     end
 
@@ -225,6 +224,19 @@ describe ShamRack do
 
       env["REQUEST_METHOD"].should == "POST"
       env["rack.input"].read.should == "q=rack"
+
+    end
+
+    it "supports POST using Patron" do
+
+      patron = Patron::Session.new
+      response = patron.post("http://env.xyz/resource", "<xml/>", "Content-Type" => "application/xml")
+
+      response.status.should == "200 OK"
+      
+      env["REQUEST_METHOD"].should == "POST"
+      env["rack.input"].read.should == "<xml/>"
+      env["CONTENT_TYPE"].should == "application/xml"
 
     end
 

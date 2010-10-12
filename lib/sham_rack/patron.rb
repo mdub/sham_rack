@@ -27,7 +27,9 @@ module Patron
     end
 
     def rack_env_for(patron_request)
-      Rack::MockRequest.env_for(patron_request.url, :method => patron_request.action)
+      env = Rack::MockRequest.env_for(patron_request.url, :method => patron_request.action, :input => patron_request.upload_data)
+      env.merge!(header_env(patron_request))
+      env
     end
 
     def patron_response(rack_response)
@@ -37,8 +39,18 @@ module Patron
       res.instance_variable_set(:@status, status)
       res.instance_variable_set(:@status_line, "HTTP/1.1 #{status} #{status_code}")
       res.instance_variable_set(:@body, assemble_body(body))
-      # res.instance_variable_set(:@headers, webmock_response.headers)
+      res.instance_variable_set(:@headers, headers)
       res
+    end
+
+    def header_env(patron_request)
+      env = {}
+      patron_request.headers.each do |header, content|
+        key = header.upcase.gsub('-', '_')
+        key = "HTTP_" + key unless key =~ /^CONTENT_(TYPE|LENGTH)$/
+        env[key] = content
+      end
+      env
     end
 
     def assemble_body(body)
