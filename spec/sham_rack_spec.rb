@@ -178,7 +178,7 @@ describe ShamRack do
       env["SERVER_NAME"].should == "env.xyz"
       env["SERVER_PORT"].should == "80"
 
-      env["rack.version"].should == [0,1]
+      env["rack.version"].should be_kind_of(Array)
       env["rack.url_scheme"].should == "http"
 
       env["rack.multithread"].should == true

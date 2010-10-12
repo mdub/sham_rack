@@ -1,5 +1,6 @@
 require "net/http"
 require "sham_rack/registry"
+require "rack/mock"
 
 class << Net::HTTP  
 
@@ -33,66 +34,41 @@ module ShamRack
         end
       end
 
-      def request(req, body = nil)
-        env = default_env
-        env.merge!(path_env(req.path))
-        env.merge!(method_env(req))
-        env.merge!(header_env(req))
-        env.merge!(io_env(req, body))
-        response = build_response(@rack_app.call(env))
-        yield response if block_given?
-        return response
+      def request(request, body = nil)
+        rack_response = @rack_app.call(rack_env(request, body))
+        net_http_response = build_response(rack_response)
+        yield net_http_response if block_given?
+        return net_http_response
       end
 
       private
 
-      def default_env
+      def rack_env(request, body)
+        rack_env = request_env(request, body)
+        rack_env.merge!(header_env(request))
+        rack_env.merge!(server_env)
+      end
+      
+      def server_env
         {
-          "SCRIPT_NAME" => "",
-          "SERVER_NAME" => @address,
-          "SERVER_PORT" => @port.to_s,   
-          "rack.version" => [0,1],
-          "rack.url_scheme" => "http",
-          "rack.multithread" => true,
-          "rack.multiprocess" => true,
-          "rack.run_once" => false
+          "SERVER_NAME" => @address, 
+          "SERVER_PORT" => @port.to_s
         }
       end
-
-      def method_env(request)
-        {
-          "REQUEST_METHOD" => request.method
-        }
-      end
-
-      def io_env(request, body)
-        raise(ArgumentError, "both request.body and body argument were provided") if (request.body && body)
-        body ||= request.body || ""
-        body = body.to_s
-        body = body.encode("ASCII-8BIT") if body.respond_to?(:encode)
-        { 
-          "rack.input" => StringIO.new(body),
-          "rack.errors" => $stderr
-        }
-      end
-
-      def path_env(path)
-        uri = URI.parse(path)
-        {
-          "PATH_INFO" => uri.path,
-          "QUERY_STRING" => (uri.query || ""),
-        }
-      end
-
+      
       def header_env(request)
-        result = {}
-        request.each do |header, content|
-          result["HTTP_" + header.upcase.gsub('-', '_')] = content
+        env = {}
+        request.each_header do |header, content|
+          key = header.upcase.gsub('-', '_')
+          key = "HTTP_" + key unless key =~ /^CONTENT_(TYPE|LENGTH)$/
+          env[key] = content
         end
-        %w(TYPE LENGTH).each do |x|
-          result["CONTENT_#{x}"] = result.delete("HTTP_CONTENT_#{x}") if result.has_key?("HTTP_CONTENT_#{x}")
-        end
-        return result
+        env
+      end
+
+      def request_env(request, body)
+        body ||= request.body || ""
+        Rack::MockRequest.env_for(request.path, :method => request.method, :input => body.to_s)
       end
 
       def build_response(rack_response)
