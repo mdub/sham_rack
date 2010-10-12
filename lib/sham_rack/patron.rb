@@ -22,8 +22,20 @@ module Patron
 
     def handle_request_with_rack(patron_request, rack_app)
       res = Patron::Response.new
-      res.body = "Hello World"
+      res.instance_variable_set(:@body, "hello World")
+      # res.instance_variable_set(:@status, webmock_response.status[0])
+      # res.instance_variable_set(:@status_line, webmock_response.status[1])
+      # res.instance_variable_set(:@headers, webmock_response.headers)
       res
+    end
+
+    def create_rack_request(patron_request)
+    end
+
+    def rack_env(patron_request)
+    end
+
+    def patron_response(rack_response)
     end
 
   end
