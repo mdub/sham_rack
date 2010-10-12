@@ -87,7 +87,7 @@ module ShamRack
       def assemble_body(body)
         content = ""
         body.each { |fragment| content << fragment }
-        return content
+        content
       end
 
     end

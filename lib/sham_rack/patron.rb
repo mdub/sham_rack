@@ -21,21 +21,29 @@ module Patron
     private
 
     def handle_request_with_rack(patron_request, rack_app)
+      env = rack_env_for(patron_request)
+      rack_response = rack_app.call(env)
+      patron_response(rack_response)
+    end
+
+    def rack_env_for(patron_request)
+      Rack::MockRequest.env_for(patron_request.url, :method => patron_request.action)
+    end
+
+    def patron_response(rack_response)
+      status, headers, body = rack_response
       res = Patron::Response.new
-      res.instance_variable_set(:@body, "hello World")
-      # res.instance_variable_set(:@status, webmock_response.status[0])
+      res.instance_variable_set(:@status, status)
+      res.instance_variable_set(:@body, assemble_body(body))
       # res.instance_variable_set(:@status_line, webmock_response.status[1])
       # res.instance_variable_set(:@headers, webmock_response.headers)
       res
     end
 
-    def create_rack_request(patron_request)
-    end
-
-    def rack_env(patron_request)
-    end
-
-    def patron_response(rack_response)
+    def assemble_body(body)
+      content = ""
+      body.each { |fragment| content << fragment }
+      content
     end
 
   end
