@@ -250,12 +250,33 @@ describe ShamRack do
 
     end
 
+    it "supports PUT using Patron" do
+
+      patron = Patron::Session.new
+      response = patron.put("http://env.xyz/resource", "stuff", "Content-Type" => "text/plain")
+
+      env["REQUEST_METHOD"].should == "PUT"
+      env["CONTENT_TYPE"].should == "text/plain"
+      env["rack.input"].read.should == "stuff"
+
+    end
+
     it "supports DELETE" do
 
       RestClient.delete("http://env.xyz/thing/1")
 
       env["REQUEST_METHOD"].should == "DELETE"
       env["PATH_INFO"].should == "/thing/1"
+
+    end
+
+    it "supports DELETE using Patron" do
+
+      patron = Patron::Session.new
+      response = patron.delete("http://env.xyz/resource")
+
+      env["REQUEST_METHOD"].should == "DELETE"
+      env["PATH_INFO"].should == "/resource"
 
     end
 
