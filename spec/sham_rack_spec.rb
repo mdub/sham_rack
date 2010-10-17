@@ -16,7 +16,7 @@ describe ShamRack do
   describe "mounted Rack application" do
 
     before(:each) do
-      ShamRack.mount(SimpleMessageApp.new("Hello, world"), "www.test.xyz")
+      ShamRack.mount(GreetingApp.new, "www.test.xyz")
     end
 
     it "can be accessed using Net::HTTP" do
@@ -56,37 +56,6 @@ describe ShamRack do
 
   end
 
-  describe "response" do
-    
-    before(:each) do
-      ShamRack.at("www.test.xyz") do
-        [
-          "201 Created", 
-          { "Content-Type" => "text/plain", "X-Foo" => "bar" },
-          ["BODY"]
-        ]
-      end
-      @response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
-    end
-    
-    it "has status returned by app" do
-      @response.code.should == "201"
-    end
-
-    it "has body returned by app" do
-      @response.body.should == "BODY"
-    end
-    
-    it "has Content-Type returned by app" do
-      @response.content_type.should == "text/plain"
-    end
-    
-    it "has other headers returned by app" do
-      @response["x-foo"].should =="bar"
-    end
-    
-  end
-  
   describe ".at" do
 
     describe "with a block" do
@@ -108,12 +77,12 @@ describe ShamRack do
       before do
         @return_value = ShamRack.at("rackup.xyz").rackup do
           use UpcaseBody
-          run SimpleMessageApp.new("Racked!")
+          run GreetingApp.new
         end
       end
 
       it "mounts an app created using Rack::Builder" do
-        open("http://rackup.xyz").read.should == "RACKED!"
+        open("http://rackup.xyz").read.should == "HELLO, WORLD"
       end
 
       it "returns the app" do
@@ -160,10 +129,41 @@ describe ShamRack do
     
   end
 
+  describe "response" do
+    
+    before(:each) do
+      ShamRack.at("www.test.xyz") do
+        [
+          "201 Created", 
+          { "Content-Type" => "text/plain", "X-Foo" => "bar" },
+          ["BODY"]
+        ]
+      end
+      @response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
+    end
+    
+    it "has status returned by app" do
+      @response.code.should == "201"
+    end
+
+    it "has body returned by app" do
+      @response.body.should == "BODY"
+    end
+    
+    it "has Content-Type returned by app" do
+      @response.content_type.should == "text/plain"
+    end
+    
+    it "has other headers returned by app" do
+      @response["x-foo"].should =="bar"
+    end
+    
+  end
+  
   describe "Rack environment" do
 
     before(:each) do
-      @env_recorder = recorder = EnvRecordingApp.new
+      @env_recorder = recorder = EnvRecorder.new(GreetingApp.new)
       ShamRack.at("env.xyz").rackup do
         use Rack::Lint
         run recorder

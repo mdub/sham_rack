@@ -1,37 +1,35 @@
-class PlainTextApp
+require "rack"
 
+class GreetingApp
+
+  include Rack::Utils
+  
   def call(env)
+    params = parse_nested_query(env["QUERY_STRING"])
+    salutation = params[:salutation] || "Hello"
+    subject = params[:subject] || "world"
+    message = "#{salutation}, #{subject}"
     [
       "200 OK", 
       { "Content-Type" => "text/plain", "Content-Length" => message.length.to_s },
       [message]
     ]
   end
-
+  
 end
 
-class SimpleMessageApp < PlainTextApp
+class EnvRecorder
 
-  def initialize(message)
-    @message = message
+  def initialize(app)
+    @app = app
   end
-
-  attr_reader :message
-
-end
-
-class EnvRecordingApp < PlainTextApp
-
+  
   def call(env)
     @last_env = env
-    super
+    @app.call(env)
   end
 
   attr_reader :last_env
-
-  def message
-    "env stored for later perusal"
-  end
 
 end
 
