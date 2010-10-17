@@ -1,3 +1,7 @@
+## 18-Oct-2010 [mdub@dogbiscuit.org]
+
+* Add support for Patron.
+
 ## 02-Sep-2010 [mdub@dogbiscuit.org]
 
 * Fixes to support Ruby-1.9.x.
