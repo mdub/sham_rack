@@ -1,6 +1,5 @@
 require "net/http"
 require "sham_rack/registry"
-require "rack/mock"
 
 class << Net::HTTP  
 
