@@ -16,41 +16,41 @@ describe ShamRack do
   describe "mounted Rack application" do
 
     before(:each) do
-      ShamRack.mount(GreetingApp.new, "www.test.xyz")
+      ShamRack.mount(GreetingApp.new, "www.greetings.com")
     end
 
     it "can be accessed using Net::HTTP" do
-      response = Net::HTTP.start("www.test.xyz") do |http|
+      response = Net::HTTP.start("www.greetings.com") do |http|
         http.request(Net::HTTP::Get.new("/"))
       end
       response.body.should == "Hello, world"
     end
 
     it "can be accessed using Net::HTTP#get_response" do
-      response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
+      response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
       response.body.should == "Hello, world"
     end
 
     it "can be accessed using open-uri" do
-      response = open("http://www.test.xyz")
+      response = open("http://www.greetings.com")
       response.status.should == ["200", "OK"]
       response.read.should == "Hello, world"
     end
 
     it "can be accessed using RestClient" do
-      response = RestClient.get("http://www.test.xyz")
+      response = RestClient.get("http://www.greetings.com")
       response.code.should == 200
       response.to_s.should == "Hello, world"
     end
 
     it "can be accessed using Mechanize" do
-      response = Mechanize.new.get("http://www.test.xyz")
+      response = Mechanize.new.get("http://www.greetings.com")
       response.body.should == "Hello, world"
     end
 
     it "can be accessed using Patron" do
       patron = Patron::Session.new
-      response = patron.get("http://www.test.xyz/foo/bar")
+      response = patron.get("http://www.greetings.com/foo/bar")
       response.body.should == "Hello, world"
     end
 
@@ -132,14 +132,14 @@ describe ShamRack do
   describe "response" do
     
     before(:each) do
-      ShamRack.at("www.test.xyz") do
+      ShamRack.at("www.greetings.com") do
         [
           "201 Created", 
           { "Content-Type" => "text/plain", "X-Foo" => "bar" },
           ["BODY"]
         ]
       end
-      @response = Net::HTTP.get_response(URI.parse("http://www.test.xyz/"))
+      @response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
     end
     
     it "has status returned by app" do
