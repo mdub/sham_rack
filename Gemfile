@@ -1,10 +1,10 @@
-source "http://rubygems.org"
+source :rubygems
 
-gem "rack"
+gemspec
 
 group :test do
   gem "rake"
-  gem "rspec"
+  gem "rspec", "~> 1.3.1"
   gem "rr", "~> 1.0"
   gem "rack-test"
   gem "sinatra"

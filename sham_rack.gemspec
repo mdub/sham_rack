@@ -16,6 +16,8 @@ Gem::Specification.new do |gem|
   gem.version = ShamRack::VERSION.dup
   gem.platform = Gem::Platform::RUBY
 
+  gem.add_dependency "rack"
+
   gem.require_path = "lib"
   gem.files = Dir["lib/**/*", "README.markdown", "CHANGES.markdown"]
   gem.test_files = Dir["spec/**/*", "Rakefile", "benchmark/**/*"]
