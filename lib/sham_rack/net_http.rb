@@ -1,10 +1,11 @@
 require "net/http"
+require "rack"
 require "sham_rack/registry"
 
-class << Net::HTTP  
+class << Net::HTTP
 
   alias :new_without_sham_rack :new
-  
+
   def new(address, port = nil, *proxy_args)
     port ||= Net::HTTP.default_port
     rack_app = ShamRack.application_for(address, port)
@@ -20,14 +21,14 @@ end
 
 module ShamRack
   module NetHttp
-    
+
     module Extensions
 
       attr_accessor :rack_app
 
       def start
         if block_given?
-          yield self 
+          yield self
         else
           self
         end
@@ -47,14 +48,14 @@ module ShamRack
         rack_env.merge!(header_env(request))
         rack_env.merge!(server_env)
       end
-      
+
       def server_env
         {
-          "SERVER_NAME" => @address, 
+          "SERVER_NAME" => @address,
           "SERVER_PORT" => @port.to_s
         }
       end
-      
+
       def header_env(request)
         env = {}
         request.each_header do |header, content|
