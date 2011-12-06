@@ -29,7 +29,7 @@ Using it
     require 'sham_rack'
 
     ShamRack.at("www.greetings.com") do |env|
-      ["200 OK", { "Content-type" => "text/plain" }, "Hello, world!"]
+      ["200 OK", { "Content-type" => "text/plain" }, ["Hello, world!"]]
     end
       
     require 'open-uri'
