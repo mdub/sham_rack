@@ -100,7 +100,7 @@ describe ShamRack do
           end
         end
       end
-      
+
       it "mounts associated block as a Sinatra app" do
         open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
       end
@@ -108,11 +108,11 @@ describe ShamRack do
       it "returns the app" do
         @return_value.should respond_to(:call)
       end
-      
+
     end
 
     describe "#stub" do
-      
+
       before do
         @return_value = ShamRack.at("stubbed.xyz").stub
       end
@@ -120,28 +120,28 @@ describe ShamRack do
       it "mounts a StubWebService" do
         ShamRack.application_for("stubbed.xyz").should be_kind_of(ShamRack::StubWebService)
       end
-      
+
       it "returns the StubWebService" do
         @return_value.should == ShamRack.application_for("stubbed.xyz")
       end
-      
+
     end
-    
+
   end
 
   describe "response" do
-    
+
     before(:each) do
       ShamRack.at("www.greetings.com") do
         [
-          "201 Created", 
+          "201 Created",
           { "Content-Type" => "text/plain", "X-Foo" => "bar" },
           ["BODY"]
         ]
       end
       @response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
     end
-    
+
     it "has status returned by app" do
       @response.code.should == "201"
     end
@@ -149,17 +149,17 @@ describe ShamRack do
     it "has body returned by app" do
       @response.body.should == "BODY"
     end
-    
+
     it "has Content-Type returned by app" do
       @response.content_type.should == "text/plain"
     end
-    
+
     it "has other headers returned by app" do
       @response["x-foo"].should =="bar"
     end
-    
+
   end
-  
+
   describe "Rack environment" do
 
     before(:each) do
@@ -232,8 +232,8 @@ describe ShamRack do
       patron = Patron::Session.new
       response = patron.post("http://env.xyz/resource", "<xml/>", "Content-Type" => "application/xml")
 
-      response.status.should == "200 OK"
-      
+      response.status.should == 200
+
       env["REQUEST_METHOD"].should == "POST"
       env["rack.input"].read.should == "<xml/>"
       env["CONTENT_TYPE"].should == "application/xml"

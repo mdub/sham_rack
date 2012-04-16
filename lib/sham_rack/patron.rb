@@ -34,13 +34,7 @@ module Patron
 
     def patron_response(rack_response)
       status, headers, body = rack_response
-      status_code = Rack::Utils::HTTP_STATUS_CODES[status.to_i]
-      res = Patron::Response.new
-      res.instance_variable_set(:@status, status)
-      res.instance_variable_set(:@status_line, "HTTP/1.1 #{status} #{status_code}")
-      res.instance_variable_set(:@body, assemble_body(body))
-      res.instance_variable_set(:@headers, headers)
-      res
+      Patron::Response.new("", status.to_i, 0, assemble_headers(status, headers), assemble_body(body))
     end
 
     def header_env(patron_request)
@@ -51,6 +45,15 @@ module Patron
         env[key] = content
       end
       env
+    end
+
+    def assemble_headers(status, headers)
+      status_code = Rack::Utils::HTTP_STATUS_CODES[status.to_i]
+      content = "HTTP/1.1 #{status} #{status_code}\r\n"
+      headers.each do |k, v|
+        content << "#{k}: #{v}\r\n"
+      end
+      content
     end
 
     def assemble_body(body)

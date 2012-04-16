@@ -10,5 +10,5 @@ group :test do
   gem "sinatra"
   gem "rest-client"
   gem "mechanize"
-  gem "patron"
+  gem "patron", ">= 0.4.16"
 end
