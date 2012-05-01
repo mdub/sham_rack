@@ -41,8 +41,6 @@ module ShamRack
 
   end
 
-  extend Registry
-
   class Registrar
 
     def initialize(address, port = nil)
