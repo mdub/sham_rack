@@ -56,6 +56,20 @@ describe ShamRack do
 
   end
 
+  describe ".mount" do
+
+    context "with a URL" do
+
+      it "raises an ArgumentError" do
+        lambda do
+          ShamRack.mount(GreetingApp.new, "http://www.greetings.com")
+        end.should raise_error(ArgumentError, "invalid address")
+      end
+
+    end
+
+  end
+
   describe ".at" do
 
     describe "with a block" do
