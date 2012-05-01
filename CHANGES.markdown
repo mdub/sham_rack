@@ -1,3 +1,8 @@
+## 1-May-2012 [mdub@dogbiscuit.org]
+
+* Validate arguments to `ShamRack#mount`.
+* Update for compatibility with patron-0.4.x.
+
 ## 18-Oct-2010 [mdub@dogbiscuit.org]
 
 * Add support for Patron.
