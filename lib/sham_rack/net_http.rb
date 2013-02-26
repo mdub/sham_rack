@@ -1,5 +1,6 @@
 require "net/http"
 require "rack"
+require "rack/body_proxy"
 require "sham_rack/registry"
 
 class << Net::HTTP
@@ -85,6 +86,7 @@ module ShamRack
       end
 
       def assemble_body(body)
+				body.close if body.instance_of? Rack::BodyProxy
         content = ""
         body.each { |fragment| content << fragment }
         content
