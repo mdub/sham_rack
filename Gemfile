@@ -1,4 +1,4 @@
-source :rubygems
+source "http://rubygems.org"
 
 gemspec
 
@@ -11,4 +11,8 @@ group :test do
   gem "rest-client"
   gem "mechanize"
   gem "patron", ">= 0.4.16"
+  if rack_version = ENV["RACK_VERSION"]
+    gem "rack", rack_version
+  end
 end
+
