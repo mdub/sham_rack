@@ -160,6 +160,10 @@ describe ShamRack do
       @response.code.should == "201"
     end
 
+    it "has status message returned by app" do
+      @response.message.should == "Created"
+    end
+
     it "has body returned by app" do
       @response.body.should == "BODY"
     end
