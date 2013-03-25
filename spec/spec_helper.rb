@@ -1,9 +1,9 @@
 require "rubygems"
-require "spec"
+require "rspec"
 require "rr"
 
-Spec::Runner.configure do |config|
-  config.mock_with RR::Adapters::Rspec
+RSpec.configure do |config|
+  config.mock_with :rr
 end
 
 require "test_apps"
