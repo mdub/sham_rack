@@ -74,6 +74,7 @@ module ShamRack
       def build_response(rack_response)
         status, headers, body = rack_response
         code, message = status.to_s.split(" ", 2)
+        message ||= Rack::Utils::HTTP_STATUS_CODES[code.to_i]
         response = Net::HTTPResponse.send(:response_class, code).new("Sham", code, message)
         response.instance_variable_set(:@body, assemble_body(body))
         response.instance_variable_set(:@read, true)

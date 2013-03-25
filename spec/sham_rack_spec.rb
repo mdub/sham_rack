@@ -148,32 +148,56 @@ describe ShamRack do
     before(:each) do
       ShamRack.at("www.greetings.com") do
         [
-          "201 Created",
+          "456 Foo Bar",
           { "Content-Type" => "text/plain", "X-Foo" => "bar" },
           ["BODY"]
         ]
       end
-      @response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
     end
 
+    let(:response) { Net::HTTP.get_response(URI.parse("http://www.greetings.com/")) }
+
     it "has status returned by app" do
-      @response.code.should == "201"
+      response.code.should == "456"
     end
 
     it "has status message returned by app" do
-      @response.message.should == "Created"
+      response.message.should == "Foo Bar"
     end
 
     it "has body returned by app" do
-      @response.body.should == "BODY"
+      response.body.should == "BODY"
     end
 
     it "has Content-Type returned by app" do
-      @response.content_type.should == "text/plain"
+      response.content_type.should == "text/plain"
     end
 
     it "has other headers returned by app" do
-      @response["x-foo"].should =="bar"
+      response["x-foo"].should =="bar"
+    end
+
+    context "when the app returns a numeric status" do
+
+      before(:each) do
+        ShamRack.at("www.greetings.com") do
+          [
+            201,
+            { "Content-Type" => "text/plain" },
+            ["BODY"]
+          ]
+        end
+        @response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
+      end
+
+      it "has status returned by app" do
+        response.code.should == "201"
+      end
+
+      it "derives a status message" do
+        response.message.should == "Created"
+      end
+
     end
 
   end
