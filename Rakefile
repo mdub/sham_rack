@@ -6,7 +6,7 @@ task "default" => "spec"
 require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = ["--colour", "--format", "nested"]
+  t.rspec_opts = ["--format", "nested"]
 end
 
 require 'bundler'
