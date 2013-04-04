@@ -5,7 +5,7 @@ gemspec
 group :test do
   gem "rake"
   gem "rspec", "~> 2.13.0"
-  gem "rr", "~> 1.0.4"
+  gem "rr", "~> 1.0.5"
   gem "rack-test"
   gem "sinatra"
   gem "rest-client"
