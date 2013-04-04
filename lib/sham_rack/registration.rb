@@ -21,9 +21,12 @@ module ShamRack
       mount_point_for(address, port).app
     end
 
-    # deprecated
     def mount(app, address, port = nil)
       at(address, port).mount(app)
+    end
+
+    def unmount(address, port = nil)
+      at(address, port).unmount
     end
 
     private
@@ -55,6 +58,10 @@ module ShamRack
 
     def mount(app)
       @app = app
+    end
+
+    def unmount
+      @app = nil
     end
 
     alias run mount

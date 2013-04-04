@@ -9,6 +9,16 @@ require "rack"
 
 describe ShamRack do
 
+  class NetHttpProhibited < StandardError; end
+
+  before do
+    any_instance_of(Net::HTTP) do |http|
+      stub(http).start do
+        raise NetHttpProhibited, "real network calls are not allowed"
+      end
+    end
+  end
+
   after(:each) do
     ShamRack.unmount_all
   end
@@ -65,6 +75,21 @@ describe ShamRack do
           ShamRack.mount(GreetingApp.new, "http://www.greetings.com")
         end.should raise_error(ArgumentError, "invalid address")
       end
+
+    end
+
+  end
+
+  describe ".unmount" do
+
+    it "deregisters a mounted app" do
+
+      ShamRack.mount(GreetingApp.new, "gone.xyz")
+      ShamRack.unmount("gone.xyz")
+
+      lambda do
+        open("http://gone.xyz").read
+      end.should raise_error(NetHttpProhibited)
 
     end
 
