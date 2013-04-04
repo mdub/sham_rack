@@ -48,22 +48,25 @@ module ShamRack
       @port = port
     end
 
+    def run(app)
+      ShamRack.mount(app, @address, @port)
+    end
+
     def rackup(&block)
       require "rack"
-      app = Rack::Builder.new(&block).to_app
-      ShamRack.mount(app, @address, @port)
+      run(Rack::Builder.new(&block).to_app)
     end
 
     def sinatra(&block)
       require "sinatra/base"
       sinatra_app = Class.new(Sinatra::Base)
       sinatra_app.class_eval(&block)
-      ShamRack.mount(sinatra_app.new, @address, @port)
+      run(sinatra_app.new)
     end
 
     def stub
       require "sham_rack/stub_web_service"
-      ShamRack.mount(StubWebService.new, @address, @port)
+      run(StubWebService.new)
     end
 
   end

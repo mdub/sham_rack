@@ -53,9 +53,9 @@ Using it
       run MyApp.new
     end
 
-### Any old app
+### Any old Rack app
 
-    ShamRack.mount(my_google_stub, "google.com")
+    ShamRack.at("google.com").run(my_google_stub) 
 
 ### General-purpose stubbing
 

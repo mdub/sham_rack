@@ -86,6 +86,18 @@ describe ShamRack do
 
     end
 
+    describe "#run" do
+
+      it "is sugar for ShamRack.mount" do
+
+        ShamRack.at("hello.xyz").run(GreetingApp.new)
+
+        open("http://hello.xyz").read.should == "Hello, world"
+
+      end
+
+    end
+
     describe "#rackup" do
 
       before do
