@@ -4,35 +4,41 @@ module ShamRack
 
     ADDRESS_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*$/i
 
-    # deprecated
-    def mount(app, address, port = nil)
-      at(address, port).mount(app)
-    end
-
     def unmount_all
       registry.clear
     end
 
     def at(address, port = nil, &app_block)
-      registrar = Registrar.new(registry, resolve_mount_point(address, port))
+      mount_point = mount_point_for(address, port)
       if app_block
-        registrar.mount(app_block)
+        mount_point.mount(app_block)
       else
-        registrar
+        mount_point
       end
     end
 
     def application_for(address, port = nil)
-      registry[resolve_mount_point(address, port)]
+      mount_point_for(address, port).app
+    end
+
+    # deprecated
+    def mount(app, address, port = nil)
+      at(address, port).mount(app)
     end
 
     private
 
-    def registry
-      @registry ||= {}
+    def mount_point_for(address, port)
+      registry[mount_key(address, port)]
     end
 
-    def resolve_mount_point(address, port = nil)
+    def registry
+      @registry ||= Hash.new do |hash, key|
+        hash[key] = MountPoint.new
+      end
+    end
+
+    def mount_key(address, port)
       unless address =~ ADDRESS_PATTERN
         raise ArgumentError, "invalid address"
       end
@@ -43,17 +49,12 @@ module ShamRack
 
   end
 
-  class Registrar
+  class MountPoint
 
-    def initialize(registry, mount_point)
-      @registry = registry
-      @mount_point = mount_point
-    end
-
-    attr_reader :registry, :mount_point
+    attr_reader :app
 
     def mount(app)
-      registry[mount_point] = app
+      @app = app
     end
 
     alias run mount
