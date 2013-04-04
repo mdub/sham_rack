@@ -1,6 +1,6 @@
 module ShamRack
 
-  module Registry
+  module Registration
 
     ADDRESS_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*$/i
 

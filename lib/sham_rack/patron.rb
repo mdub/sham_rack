@@ -1,5 +1,5 @@
 require "patron"
-require "sham_rack/registry"
+require "sham_rack"
 require "uri"
 
 module Patron
