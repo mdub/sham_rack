@@ -4,33 +4,26 @@ module ShamRack
 
     ADDRESS_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*$/i
 
-    def mount(rack_app, address, port = nil)
-      unless address =~ ADDRESS_PATTERN
-        raise ArgumentError, "invalid address"
-      end
-      if port.nil?
-        port = Net::HTTP.default_port
-      else
-        port = Integer(port)
-      end
-      registry[[address, port]] = rack_app
+    # deprecated
+    def mount(app, address, port = nil)
+      at(address, port).mount(app)
     end
 
     def unmount_all
       registry.clear
     end
 
-    def at(address, port = nil, &block)
-      if block
-        mount(block, address, port)
+    def at(address, port = nil, &app_block)
+      registrar = Registrar.new(registry, resolve_mount_point(address, port))
+      if app_block
+        registrar.mount(app_block)
       else
-        Registrar.new(address, port)
+        registrar
       end
     end
 
     def application_for(address, port = nil)
-      port ||= Net::HTTP.default_port
-      registry[[address, port]]
+      registry[resolve_mount_point(address, port)]
     end
 
     private
@@ -39,34 +32,47 @@ module ShamRack
       @registry ||= {}
     end
 
+    def resolve_mount_point(address, port = nil)
+      unless address =~ ADDRESS_PATTERN
+        raise ArgumentError, "invalid address"
+      end
+      port ||= Net::HTTP.default_port
+      port = Integer(port)
+      [address, port]
+    end
+
   end
 
   class Registrar
 
-    def initialize(address, port = nil)
-      @address = address
-      @port = port
+    def initialize(registry, mount_point)
+      @registry = registry
+      @mount_point = mount_point
     end
 
-    def run(app)
-      ShamRack.mount(app, @address, @port)
+    attr_reader :registry, :mount_point
+
+    def mount(app)
+      registry[mount_point] = app
     end
+
+    alias run mount
 
     def rackup(&block)
       require "rack"
-      run(Rack::Builder.new(&block).to_app)
+      mount(Rack::Builder.new(&block).to_app)
     end
 
     def sinatra(&block)
       require "sinatra/base"
       sinatra_app = Class.new(Sinatra::Base)
       sinatra_app.class_eval(&block)
-      run(sinatra_app.new)
+      mount(sinatra_app.new)
     end
 
     def stub
       require "sham_rack/stub_web_service"
-      run(StubWebService.new)
+      mount(StubWebService.new)
     end
 
   end
