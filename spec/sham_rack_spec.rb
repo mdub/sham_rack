@@ -66,23 +66,9 @@ describe ShamRack do
 
   end
 
-  describe ".mount" do
-
-    context "with a URL" do
-
-      it "raises an ArgumentError" do
-        lambda do
-          ShamRack.mount(GreetingApp.new, "http://www.greetings.com")
-        end.should raise_error(ArgumentError, "invalid address")
-      end
-
-    end
-
-  end
-
   describe ".at" do
 
-    describe "with a block" do
+    context "with a block" do
 
       it "mounts associated block as an app" do
 
@@ -96,9 +82,19 @@ describe ShamRack do
 
     end
 
+    context "with a URL" do
+
+      it "raises an ArgumentError" do
+        lambda do
+          ShamRack.at("http://www.greetings.com")
+        end.should raise_error(ArgumentError, "invalid address")
+      end
+
+    end
+
     describe "#mount" do
 
-      it "is sugar for ShamRack.mount" do
+      it "mounts an app" do
 
         ShamRack.at("hello.xyz").mount(GreetingApp.new)
 
@@ -175,6 +171,18 @@ describe ShamRack do
       it "returns the StubWebService" do
         @return_value.should == ShamRack.application_for("stubbed.xyz")
       end
+
+    end
+
+  end
+
+  describe ".mount" do
+
+    it "is deprecated, but still works" do
+
+      ShamRack.mount(GreetingApp.new, "hello.xyz")
+
+      open("http://hello.xyz").read.should == "Hello, world"
 
     end
 
