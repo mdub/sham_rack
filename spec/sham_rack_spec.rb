@@ -80,21 +80,6 @@ describe ShamRack do
 
   end
 
-  describe ".unmount" do
-
-    it "deregisters a mounted app" do
-
-      ShamRack.mount(GreetingApp.new, "gone.xyz")
-      ShamRack.unmount("gone.xyz")
-
-      lambda do
-        open("http://gone.xyz").read
-      end.should raise_error(NetHttpProhibited)
-
-    end
-
-  end
-
   describe ".at" do
 
     describe "with a block" do
@@ -118,6 +103,21 @@ describe ShamRack do
         ShamRack.at("hello.xyz").mount(GreetingApp.new)
 
         open("http://hello.xyz").read.should == "Hello, world"
+
+      end
+
+    end
+
+    describe "#unmount" do
+
+      it "deregisters a mounted app" do
+
+        ShamRack.at("gone.xyz").mount(GreetingApp.new)
+        ShamRack.at("gone.xyz").unmount
+
+        lambda do
+          open("http://gone.xyz").read
+        end.should raise_error(NetHttpProhibited)
 
       end
 
