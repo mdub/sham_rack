@@ -1,4 +1,4 @@
-ShamRack
+ShamRack [![Build Status](https://secure.travis-ci.org/mdub/sham_rack.png?branch=master)](http://travis-ci.org/mdub/sham_rack)
 ========
 
 ShamRack plumbs HTTP requests into [Rack][rack].
