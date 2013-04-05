@@ -55,7 +55,7 @@ Using it
 
 ### Any old Rack app
 
-    ShamRack.at("google.com").run(my_google_stub) 
+    ShamRack.at("google.com").mount(my_google_stub) 
 
 ### General-purpose stubbing
 

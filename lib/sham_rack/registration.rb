@@ -64,8 +64,6 @@ module ShamRack
       @app = nil
     end
 
-    alias run mount
-
     def rackup(&block)
       require "rack"
       mount(Rack::Builder.new(&block).to_app)

@@ -111,11 +111,11 @@ describe ShamRack do
 
     end
 
-    describe "#run" do
+    describe "#mount" do
 
       it "is sugar for ShamRack.mount" do
 
-        ShamRack.at("hello.xyz").run(GreetingApp.new)
+        ShamRack.at("hello.xyz").mount(GreetingApp.new)
 
         open("http://hello.xyz").read.should == "Hello, world"
 
