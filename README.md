@@ -1,5 +1,8 @@
-ShamRack [![Build Status](https://secure.travis-ci.org/mdub/sham_rack.png?branch=master)](http://travis-ci.org/mdub/sham_rack)
+ShamRack
 ========
+
+[![Gem Version](https://badge.fury.io/rb/sham_rack.png)](http://badge.fury.io/rb/sham_rack)
+[![Build Status](https://secure.travis-ci.org/mdub/sham_rack.png?branch=master)](http://travis-ci.org/mdub/sham_rack)
 
 ShamRack plumbs HTTP requests into [Rack][rack].
 
@@ -31,7 +34,7 @@ Using it
     ShamRack.at("www.greetings.com") do |env|
       ["200 OK", { "Content-type" => "text/plain" }, ["Hello, world!"]]
     end
-      
+
     require 'open-uri'
     open("http://www.greetings.com/").read            #=> "Hello, world!"
 
@@ -55,13 +58,13 @@ Using it
 
 ### Any old Rack app
 
-    ShamRack.at("google.com").mount(my_google_stub) 
+    ShamRack.at("google.com").mount(my_google_stub)
 
 ### General-purpose stubbing
 
     @stub_app = ShamRack.at("stubbed.com").stub
     @stub_app.register_resource("/greeting", "Hello, world!", "text/plain")
-    
+
     open("http://stubbed.com/greeting").read       #=> "Hello, world!"
     @stub_app.last_request.path                    #=> "/greeting"
 
@@ -82,7 +85,7 @@ ShamRack supports requests made using Net::HTTP, or any of the numerous APIs bui
 
     uri = URI.parse("http://www.greetings.com/")
     Net::HTTP.get_response(uri).body                      #=> "Hello, world!"
-    
+
     require 'open-uri'
     open("http://www.greetings.com/").read                #=> "Hello, world!"
 
