@@ -11,6 +11,7 @@ group :test do
   gem "rest-client"
   gem "mechanize"
   gem "patron", ">= 0.4.16"
+  gem "httpclient"
   if rack_version = ENV["RACK_VERSION"]
     gem "rack", rack_version
   end

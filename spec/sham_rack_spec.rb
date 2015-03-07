@@ -1,11 +1,13 @@
 require "spec_helper"
 
-require "sham_rack"
-require "sham_rack/patron"
-require "open-uri"
-require "restclient"
+require "httpclient"
 require "mechanize"
+require "open-uri"
 require "rack"
+require "restclient"
+require "sham_rack"
+require "sham_rack/httpclient"
+require "sham_rack/patron"
 
 describe ShamRack do
 
@@ -14,6 +16,11 @@ describe ShamRack do
   before do
     any_instance_of(Net::HTTP) do |http|
       stub(http).start do
+        raise NetHttpProhibited, "real network calls are not allowed"
+      end
+    end
+    any_instance_of(HTTPClient::Session) do |session|
+      stub(session).connect do
         raise NetHttpProhibited, "real network calls are not allowed"
       end
     end
@@ -61,6 +68,12 @@ describe ShamRack do
     it "can be accessed using Patron" do
       patron = Patron::Session.new
       response = patron.get("http://www.greetings.com/foo/bar")
+      response.body.should == "Hello, world"
+    end
+
+    it "can be accessed using HTTPClient" do
+      http = HTTPClient.new
+      response = http.get("http://www.greetings.com/foo/bar")
       response.body.should == "Hello, world"
     end
 
