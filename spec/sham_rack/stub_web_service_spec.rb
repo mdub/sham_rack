@@ -17,7 +17,7 @@ RSpec.describe ShamRack::StubWebService do
 
     it "returns the last request" do
       get '/foo/bar'
-      @app.last_request.path_info.should == "/foo/bar"
+      expect(@app.last_request.path_info).to eq("/foo/bar")
     end
 
   end
@@ -31,7 +31,7 @@ RSpec.describe ShamRack::StubWebService do
       end
 
       it "returns a 404" do
-        last_response.status.should == 404
+        expect(last_response.status).to eq(404)
       end
 
     end
@@ -59,7 +59,7 @@ RSpec.describe ShamRack::StubWebService do
       end
 
       it "receives a response from the first handler" do
-        last_response.body.should == "response from first handler"
+        expect(last_response.body).to eq("response from first handler")
       end
 
     end
@@ -71,7 +71,7 @@ RSpec.describe ShamRack::StubWebService do
       end
 
       it "receives a response from the second handler" do
-        last_response.body.should == "response from second handler"
+        expect(last_response.body).to eq("response from second handler")
       end
 
     end
@@ -83,7 +83,7 @@ RSpec.describe ShamRack::StubWebService do
       end
 
       it "receives a response from the second handler" do
-        last_response.body.should == "response from second handler"
+        expect(last_response.body).to eq("response from second handler")
       end
 
     end
@@ -98,15 +98,15 @@ RSpec.describe ShamRack::StubWebService do
     end
 
     it "sets body" do
-      last_response.body.should == "STUFF"
+      expect(last_response.body).to eq("STUFF")
     end
 
     it "sets content-type" do
-      last_response.content_type.should == "text/plain"
+      expect(last_response.content_type).to eq("text/plain")
     end
 
     it "sets status code" do
-      last_response.status.should == 202
+      expect(last_response.status).to eq(202)
     end
 
   end

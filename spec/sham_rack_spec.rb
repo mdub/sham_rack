@@ -31,35 +31,35 @@ RSpec.describe ShamRack do
       response = Net::HTTP.start("www.greetings.com") do |http|
         http.request(Net::HTTP::Get.new("/"))
       end
-      response.body.should == "Hello, world"
+      expect(response.body).to eq("Hello, world")
     end
 
     it "can be accessed using Net::HTTP#get_response" do
       response = Net::HTTP.get_response(URI.parse("http://www.greetings.com/"))
-      response.body.should == "Hello, world"
+      expect(response.body).to eq("Hello, world")
     end
 
     it "can be accessed using open-uri" do
       response = open("http://www.greetings.com")
-      response.status.should == ["200", "OK"]
-      response.read.should == "Hello, world"
+      expect(response.status).to eq(["200", "OK"])
+      expect(response.read).to eq("Hello, world")
     end
 
     it "can be accessed using RestClient" do
       response = RestClient.get("http://www.greetings.com")
-      response.code.should == 200
-      response.to_s.should == "Hello, world"
+      expect(response.code).to eq(200)
+      expect(response.to_s).to eq("Hello, world")
     end
 
     it "can be accessed using Mechanize" do
       response = Mechanize.new.get("http://www.greetings.com")
-      response.body.should == "Hello, world"
+      expect(response.body).to eq("Hello, world")
     end
 
     it "can be accessed using Patron" do
       patron = Patron::Session.new
       response = patron.get("http://www.greetings.com/foo/bar")
-      response.body.should == "Hello, world"
+      expect(response.body).to eq("Hello, world")
     end
 
   end
@@ -74,7 +74,7 @@ RSpec.describe ShamRack do
           ["200 OK", { "Content-type" => "text/plain" }, ["Easy, huh?"]]
         end
 
-        open("http://simple.xyz").read.should == "Easy, huh?"
+        expect(open("http://simple.xyz").read).to eq("Easy, huh?")
 
       end
 
@@ -83,9 +83,9 @@ RSpec.describe ShamRack do
     context "with a URL" do
 
       it "raises an ArgumentError" do
-        lambda do
+        expect do
           ShamRack.at("http://www.greetings.com")
-        end.should raise_error(ArgumentError, "invalid address")
+        end.to raise_error(ArgumentError, "invalid address")
       end
 
     end
@@ -96,7 +96,7 @@ RSpec.describe ShamRack do
 
         ShamRack.at("hello.xyz").mount(GreetingApp.new)
 
-        open("http://hello.xyz").read.should == "Hello, world"
+        expect(open("http://hello.xyz").read).to eq("Hello, world")
 
       end
 
@@ -109,9 +109,9 @@ RSpec.describe ShamRack do
         ShamRack.at("gone.xyz").mount(GreetingApp.new)
         ShamRack.at("gone.xyz").unmount
 
-        lambda do
+        expect do
           open("http://gone.xyz").read
-        end.should raise_error(NetHttpProhibited)
+        end.to raise_error(NetHttpProhibited)
 
       end
 
@@ -127,11 +127,11 @@ RSpec.describe ShamRack do
       end
 
       it "mounts an app created using Rack::Builder" do
-        open("http://rackup.xyz").read.should == "HELLO, WORLD"
+        expect(open("http://rackup.xyz").read).to eq("HELLO, WORLD")
       end
 
       it "returns the app" do
-        @return_value.should respond_to(:call)
+        expect(@return_value).to respond_to(:call)
       end
 
     end
@@ -147,11 +147,11 @@ RSpec.describe ShamRack do
       end
 
       it "mounts associated block as a Sinatra app" do
-        open("http://sinatra.xyz/hello/stranger").read.should == "Hello, stranger"
+        expect(open("http://sinatra.xyz/hello/stranger").read).to eq("Hello, stranger")
       end
 
       it "returns the app" do
-        @return_value.should respond_to(:call)
+        expect(@return_value).to respond_to(:call)
       end
 
     end
@@ -163,11 +163,11 @@ RSpec.describe ShamRack do
       end
 
       it "mounts a StubWebService" do
-        ShamRack.application_for("stubbed.xyz").should be_kind_of(ShamRack::StubWebService)
+        expect(ShamRack.application_for("stubbed.xyz")).to be_kind_of(ShamRack::StubWebService)
       end
 
       it "returns the StubWebService" do
-        @return_value.should == ShamRack.application_for("stubbed.xyz")
+        expect(@return_value).to eq(ShamRack.application_for("stubbed.xyz"))
       end
 
     end
@@ -180,7 +180,7 @@ RSpec.describe ShamRack do
 
       ShamRack.mount(GreetingApp.new, "hello.xyz")
 
-      open("http://hello.xyz").read.should == "Hello, world"
+      expect(open("http://hello.xyz").read).to eq("Hello, world")
 
     end
 
@@ -201,23 +201,23 @@ RSpec.describe ShamRack do
     let(:response) { Net::HTTP.get_response(URI.parse("http://www.greetings.com/")) }
 
     it "has status returned by app" do
-      response.code.should == "456"
+      expect(response.code).to eq("456")
     end
 
     it "has status message returned by app" do
-      response.message.should == "Foo Bar"
+      expect(response.message).to eq("Foo Bar")
     end
 
     it "has body returned by app" do
-      response.body.should == "BODY"
+      expect(response.body).to eq("BODY")
     end
 
     it "has Content-Type returned by app" do
-      response.content_type.should == "text/plain"
+      expect(response.content_type).to eq("text/plain")
     end
 
     it "has other headers returned by app" do
-      response["x-foo"].should =="bar"
+      expect(response["x-foo"]).to eq("bar")
     end
 
     context "when the app returns a numeric status" do
@@ -234,11 +234,11 @@ RSpec.describe ShamRack do
       end
 
       it "has status returned by app" do
-        response.code.should == "201"
+        expect(response.code).to eq("201")
       end
 
       it "derives a status message" do
-        response.message.should == "Created"
+        expect(response.message).to eq("Created")
       end
 
     end
@@ -263,19 +263,19 @@ RSpec.describe ShamRack do
 
       open("http://env.xyz/blah?q=abc")
 
-      env["REQUEST_METHOD"].should == "GET"
-      env["SCRIPT_NAME"].should == ""
-      env["PATH_INFO"].should == "/blah"
-      env["QUERY_STRING"].should == "q=abc"
-      env["SERVER_NAME"].should == "env.xyz"
-      env["SERVER_PORT"].should == "80"
+      expect(env["REQUEST_METHOD"]).to eq("GET")
+      expect(env["SCRIPT_NAME"]).to eq("")
+      expect(env["PATH_INFO"]).to eq("/blah")
+      expect(env["QUERY_STRING"]).to eq("q=abc")
+      expect(env["SERVER_NAME"]).to eq("env.xyz")
+      expect(env["SERVER_PORT"]).to eq("80")
 
-      env["rack.version"].should be_kind_of(Array)
-      env["rack.url_scheme"].should == "http"
+      expect(env["rack.version"]).to be_kind_of(Array)
+      expect(env["rack.url_scheme"]).to eq("http")
 
-      env["rack.multithread"].should == true
-      env["rack.multiprocess"].should == true
-      env["rack.run_once"].should == false
+      expect(env["rack.multithread"]).to eq(true)
+      expect(env["rack.multiprocess"]).to eq(true)
+      expect(env["rack.run_once"]).to eq(false)
 
     end
 
@@ -287,7 +287,7 @@ RSpec.describe ShamRack do
         http.request(request)
       end
 
-      env["HTTP_FOO_BAR"].should == "baz"
+      expect(env["HTTP_FOO_BAR"]).to eq("baz")
 
     end
 
@@ -295,9 +295,9 @@ RSpec.describe ShamRack do
 
       RestClient.post("http://env.xyz/resource", "q" => "rack")
 
-      env["REQUEST_METHOD"].should == "POST"
-      env["CONTENT_TYPE"].should == "application/x-www-form-urlencoded"
-      env["rack.input"].read.should == "q=rack"
+      expect(env["REQUEST_METHOD"]).to eq("POST")
+      expect(env["CONTENT_TYPE"]).to eq("application/x-www-form-urlencoded")
+      expect(env["rack.input"].read).to eq("q=rack")
 
     end
 
@@ -307,8 +307,8 @@ RSpec.describe ShamRack do
         http.post("/resource", "q=rack")
       end
 
-      env["REQUEST_METHOD"].should == "POST"
-      env["rack.input"].read.should == "q=rack"
+      expect(env["REQUEST_METHOD"]).to eq("POST")
+      expect(env["rack.input"].read).to eq("q=rack")
 
     end
 
@@ -317,11 +317,11 @@ RSpec.describe ShamRack do
       patron = Patron::Session.new
       response = patron.post("http://env.xyz/resource", "<xml/>", "Content-Type" => "application/xml")
 
-      response.status.should == 200
+      expect(response.status).to eq(200)
 
-      env["REQUEST_METHOD"].should == "POST"
-      env["rack.input"].read.should == "<xml/>"
-      env["CONTENT_TYPE"].should == "application/xml"
+      expect(env["REQUEST_METHOD"]).to eq("POST")
+      expect(env["rack.input"].read).to eq("<xml/>")
+      expect(env["CONTENT_TYPE"]).to eq("application/xml")
 
     end
 
@@ -329,9 +329,9 @@ RSpec.describe ShamRack do
 
       RestClient.put("http://env.xyz/thing1", "stuff", :content_type => "text/plain")
 
-      env["REQUEST_METHOD"].should == "PUT"
-      env["CONTENT_TYPE"].should == "text/plain"
-      env["rack.input"].read.should == "stuff"
+      expect(env["REQUEST_METHOD"]).to eq("PUT")
+      expect(env["CONTENT_TYPE"]).to eq("text/plain")
+      expect(env["rack.input"].read).to eq("stuff")
 
     end
 
@@ -340,9 +340,9 @@ RSpec.describe ShamRack do
       patron = Patron::Session.new
       response = patron.put("http://env.xyz/resource", "stuff", "Content-Type" => "text/plain")
 
-      env["REQUEST_METHOD"].should == "PUT"
-      env["CONTENT_TYPE"].should == "text/plain"
-      env["rack.input"].read.should == "stuff"
+      expect(env["REQUEST_METHOD"]).to eq("PUT")
+      expect(env["CONTENT_TYPE"]).to eq("text/plain")
+      expect(env["rack.input"].read).to eq("stuff")
 
     end
 
@@ -350,8 +350,8 @@ RSpec.describe ShamRack do
 
       RestClient.delete("http://env.xyz/thing/1")
 
-      env["REQUEST_METHOD"].should == "DELETE"
-      env["PATH_INFO"].should == "/thing/1"
+      expect(env["REQUEST_METHOD"]).to eq("DELETE")
+      expect(env["PATH_INFO"]).to eq("/thing/1")
 
     end
 
@@ -360,8 +360,8 @@ RSpec.describe ShamRack do
       patron = Patron::Session.new
       response = patron.delete("http://env.xyz/resource")
 
-      env["REQUEST_METHOD"].should == "DELETE"
-      env["PATH_INFO"].should == "/resource"
+      expect(env["REQUEST_METHOD"]).to eq("DELETE")
+      expect(env["PATH_INFO"]).to eq("/resource")
 
     end
 
