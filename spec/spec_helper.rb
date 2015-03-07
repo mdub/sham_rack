@@ -1,9 +1,8 @@
 require "rubygems"
 require "rspec"
-require "rr"
+require "rspec/mocks"
+require "test_apps"
 
 RSpec.configure do |config|
-  config.mock_with RR::Adapters::RSpec2
+  # config.raise_errors_for_deprecations!
 end
-
-require "test_apps"

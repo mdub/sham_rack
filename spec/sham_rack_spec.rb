@@ -7,15 +7,13 @@ require "restclient"
 require "mechanize"
 require "rack"
 
-describe ShamRack do
+RSpec.describe ShamRack do
 
   class NetHttpProhibited < StandardError; end
 
   before do
-    any_instance_of(Net::HTTP) do |http|
-      stub(http).start do
-        raise NetHttpProhibited, "real network calls are not allowed"
-      end
+    allow_any_instance_of(Net::HTTP).to receive(:start) do
+      raise NetHttpProhibited, "real network calls are not allowed"
     end
   end
 
