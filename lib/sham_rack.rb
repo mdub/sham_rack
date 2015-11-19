@@ -7,5 +7,12 @@ require "sham_rack/version"
 # For more detail, see http://github.com/mdub/sham_rack
 #
 module ShamRack
+
   extend ShamRack::Registration
+
+  def self.reset
+    unmount_all
+    allow_network_connections
+  end
+
 end

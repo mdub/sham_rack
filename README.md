@@ -70,9 +70,13 @@ Using it
 
 Or, just use Sinatra, as described above ... it's almost as succinct, and heaps more powerful.
 
+### Avoiding (accidental) real network connections
+
+    ShamRack.prevent_network_connections!
+
 ### When you're done testing
 
-    ShamRack.unmount_all
+    ShamRack.reset
 
     open("http://stubbed.com/greeting").read       #=> OpenURI::HTTPError
 

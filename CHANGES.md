@@ -1,3 +1,7 @@
+## 1.4.0 (PENDING)
+
+* Add support for `ShamRack.allow_network_connections`.
+
 ## 1.3.6 (5-Apr-2013)
 
 * Deprecate `ShamRack.mount` in favour of `ShamRack.at(...).mount`.

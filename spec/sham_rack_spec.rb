@@ -18,7 +18,7 @@ RSpec.describe ShamRack do
   end
 
   after(:each) do
-    ShamRack.unmount_all
+    ShamRack.reset
   end
 
   describe "mounted Rack application" do
@@ -239,6 +239,48 @@ RSpec.describe ShamRack do
 
       it "derives a status message" do
         expect(response.message).to eq("Created")
+      end
+
+    end
+
+  end
+
+  describe ".allow_network_connections" do
+
+    context "when false" do
+
+      before do
+        ShamRack.prevent_network_connections
+      end
+
+      after do
+        ShamRack.allow_network_connections
+      end
+
+      it "prevents Net::HTTP requests" do
+        expect {
+          Net::HTTP.get_response(URI.parse("http://www.example.com/"))
+        }.to raise_error(ShamRack::NetworkConnectionPrevented)
+      end
+
+      it "prevents Patron requests" do
+        expect {
+          Patron::Session.new.get("http://www.example.com/")
+        }.to raise_error(ShamRack::NetworkConnectionPrevented)
+      end
+
+    end
+
+    context "when true" do
+
+      before do
+        ShamRack.allow_network_connections
+      end
+
+      it "allows Net::HTTP requests" do
+        expect {
+          Net::HTTP.get_response(URI.parse("http://www.example.com/"))
+        }.to raise_error(NetHttpProhibited)
       end
 
     end

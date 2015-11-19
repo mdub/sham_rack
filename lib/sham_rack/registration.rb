@@ -1,3 +1,5 @@
+require "sham_rack/allowances"
+
 module ShamRack
 
   module Registration
@@ -18,7 +20,13 @@ module ShamRack
     end
 
     def application_for(address, port = nil)
-      mount_point_for(address, port).app
+      port ||= Net::HTTP.default_port
+      mount_point_for(address, port).app.tap do |app|
+        return app unless app.nil?
+        unless ShamRack.network_connections_allowed?
+          raise NetworkConnectionPrevented, "connection to #{address}:#{port} not allowed"
+        end
+      end
     end
 
     def mount(app, address, port = nil)
