@@ -29,10 +29,6 @@ module ShamRack
       end
     end
 
-    def mount(app, address, port = nil)
-      at(address, port).mount(app)
-    end
-
     private
 
     def mount_point_for(address, port)

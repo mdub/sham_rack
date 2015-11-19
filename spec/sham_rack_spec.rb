@@ -24,7 +24,7 @@ RSpec.describe ShamRack do
   describe "mounted Rack application" do
 
     before(:each) do
-      ShamRack.mount(GreetingApp.new, "www.greetings.com")
+      ShamRack.at("www.greetings.com").mount(GreetingApp.new)
     end
 
     it "can be accessed using Net::HTTP" do
@@ -169,18 +169,6 @@ RSpec.describe ShamRack do
       it "returns the StubWebService" do
         expect(@return_value).to eq(ShamRack.application_for("stubbed.xyz"))
       end
-
-    end
-
-  end
-
-  describe ".mount" do
-
-    it "is deprecated, but still works" do
-
-      ShamRack.mount(GreetingApp.new, "hello.xyz")
-
-      expect(open("http://hello.xyz").read).to eq("Hello, world")
 
     end
 
