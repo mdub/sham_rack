@@ -4,8 +4,8 @@ gemspec
 
 group :test do
   gem "rake"
-  gem "rspec", "~> 3.2.0"
-  gem "rspec-mocks", "~> 3.2.1"
+  gem "rspec", "~> 3.5.0"
+  gem "rspec-mocks", "~> 3.5.0"
   gem "rack-test"
   gem "sinatra"
   gem "rest-client", "~> 1.8.0"
