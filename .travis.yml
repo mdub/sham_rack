@@ -3,6 +3,8 @@ matrix:
   include:
   - {}
   - rvm: "2.4.0"
+    env: RACK_VERSION="~> 2.0" SINATRA_VERSION=">= 2.0.0.beta"
+  - rvm: "2.4.0"
     env: RACK_VERSION="~> 1.6.0"
   - rvm: "2.3.3"
     env: RACK_VERSION="~> 1.6.0"

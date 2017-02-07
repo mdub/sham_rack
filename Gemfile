@@ -7,11 +7,9 @@ group :test do
   gem "rspec", "~> 3.5.0"
   gem "rspec-mocks", "~> 3.5.0"
   gem "rack-test"
-  gem "sinatra"
+  gem "sinatra", ENV["SINATRA_VERSION"]
   gem "rest-client", "~> 1.8.0"
   gem "mechanize"
   gem "patron", ">= 0.4.16"
-  if rack_version = ENV["RACK_VERSION"]
-    gem "rack", rack_version
-  end
+  gem "rack", ENV["RACK_VERSION"]
 end
