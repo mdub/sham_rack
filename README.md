@@ -68,6 +68,13 @@ Using it
     open("http://stubbed.com/greeting").read       #=> "Hello, world!"
     @stub_app.last_request.path                    #=> "/greeting"
 
+
+### On a specific port
+
+    ShamRack.at("example.com", 8080) do |env|
+      ["200 OK", { "Content-type" => "text/plain" }, ["Hello, world!"]]
+    end
+    
 Or, just use Sinatra, as described above ... it's almost as succinct, and heaps more powerful.
 
 ### Avoiding (accidental) real network connections
