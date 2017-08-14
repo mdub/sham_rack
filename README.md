@@ -79,7 +79,7 @@ Or, just use Sinatra, as described above ... it's almost as succinct, and heaps 
 
 ### Avoiding (accidental) real network connections
 
-    ShamRack.prevent_network_connections!
+    ShamRack.prevent_network_connections
 
 ### When you're done testing
 
