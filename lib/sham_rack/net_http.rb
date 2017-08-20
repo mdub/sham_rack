@@ -66,8 +66,14 @@ module ShamRack
       end
 
       def request_env(request, body)
-        body ||= request.body || ""
-        Rack::MockRequest.env_for(request.path, :method => request.method, :input => body.to_s)
+        body ||= request_body(request)
+        Rack::MockRequest.env_for(request.path, :method => request.method, :input => body)
+      end
+
+      def request_body(request)
+        return request.body unless request.body.nil?
+        return request.body_stream.read unless request.body_stream.nil?
+        ""
       end
 
       def build_response(rack_response)
