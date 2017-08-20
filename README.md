@@ -1,8 +1,8 @@
 ShamRack
 ========
 
-[![Gem Version](https://badge.fury.io/rb/sham_rack.png)](http://badge.fury.io/rb/sham_rack)
-[![Build Status](https://secure.travis-ci.org/mdub/sham_rack.png?branch=master)](http://travis-ci.org/mdub/sham_rack)
+[![Gem Version](https://badge.fury.io/rb/sham_rack.svg)](https://badge.fury.io/rb/sham_rack)
+[![Build Status](https://travis-ci.org/mdub/sham_rack.svg?branch=master)](https://travis-ci.org/mdub/sham_rack)
 
 ShamRack plumbs HTTP requests into [Rack][rack].
 
@@ -74,7 +74,7 @@ Using it
     ShamRack.at("example.com", 8080) do |env|
       ["200 OK", { "Content-type" => "text/plain" }, ["Hello, world!"]]
     end
-    
+
 Or, just use Sinatra, as described above ... it's almost as succinct, and heaps more powerful.
 
 ### Avoiding (accidental) real network connections
