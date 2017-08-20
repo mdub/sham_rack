@@ -1,3 +1,7 @@
+## 1.4.1 (20-Aug-2017)
+
+* Add support for `Net::HTTPRequest#body_stream`, and with it, newer versions of rest-client.
+
 ## 1.4.0 (6-Jan-2017)
 
 * Add support for `ShamRack.allow_network_connections`.
