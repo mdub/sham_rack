@@ -233,6 +233,49 @@ RSpec.describe ShamRack do
 
   end
 
+  describe "streaming response" do
+
+    class Countdown
+      def each
+        10.downto(1) do |s|
+          yield "#{s}\n"
+        end
+        raise "BOOM!"
+      end
+    end
+
+    before(:each) do
+      ShamRack.at("www.bombs-r-us.com") do
+        [
+          "200",
+          { "Content-Type" => "text/plain" },
+          Countdown.new
+        ]
+      end
+    end
+
+    it "can be streamed using Net::HTTP" do
+      response = Net::HTTP.start("www.bombs-r-us.com") do |http|
+        http.request(Net::HTTP::Get.new("/")) do |response|
+          chunks = response.enum_for(:read_body)
+          expect(chunks.take(3).to_a).to eq(["10\n", "9\n", "8\n"])
+        end
+      end
+    end
+
+    it "can be streamed using RestClient" do
+      chunks = []
+      handler = proc do |response|
+        response.enum_for(:read_body).take(3).each do |chunk|
+          chunks << chunk
+        end
+      end
+      RestClient::Request.execute(:method => :get, :url => 'http://www.bombs-r-us.com', :block_response => handler)
+      expect(chunks).to eq(["10\n", "9\n", "8\n"])
+    end
+
+  end
+
   describe ".allow_network_connections" do
 
     context "when false" do

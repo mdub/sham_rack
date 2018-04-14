@@ -1,3 +1,7 @@
+## PENDING (14-Apr-2018)
+
+* Add support for streaming of response body with `Net:HTTP` and friends.
+
 ## 1.4.1 (20-Aug-2017)
 
 * Add support for `Net::HTTPRequest#body_stream`, and with it, newer versions of rest-client.

@@ -81,8 +81,7 @@ module ShamRack
         code, message = status.to_s.split(" ", 2)
         message ||= Rack::Utils::HTTP_STATUS_CODES[code.to_i]
         response = Net::HTTPResponse.send(:response_class, code).new("Sham", code, message)
-        response.instance_variable_set(:@body, assemble_body(body))
-        response.instance_variable_set(:@read, true)
+        response.instance_variable_set(:@rack_body, body)
         headers.each do |k,v|
           response.add_field(k, v)
         end
@@ -90,22 +89,17 @@ module ShamRack
         return response
       end
 
-      def assemble_body(body)
-        content = ""
-        body.each { |fragment| content << fragment }
-        content
-      end
-
     end
 
     module ResponseExtensions
 
-      def read_body(dest = nil)
-        yield @body if block_given?
-        dest << @body if dest
-        return @body
+      def read_body(dest = nil, &block)
+        out = procdest(dest, block)
+        @rack_body.each do |fragment|
+          out << fragment
+        end
+        out
       end
-
     end
 
   end
