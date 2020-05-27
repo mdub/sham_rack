@@ -7,11 +7,9 @@ Gem::Specification.new do |gem|
   gem.summary = "Net::HTTP-to-Rack plumbing"
   gem.description = "ShamRack plumbs Net::HTTP directly into Rack, for quick and easy HTTP testing."
 
-  gem.homepage = "http://github.com/mdub/sham_rack"
+  gem.homepage = "https://github.com/mdub/sham_rack"
   gem.authors = ["Mike Williams"]
   gem.email = "mdub@dogbiscuit.org"
-
-  gem.rubyforge_project = "shamrack"
 
   gem.version = ShamRack::VERSION.dup
   gem.platform = Gem::Platform::RUBY
