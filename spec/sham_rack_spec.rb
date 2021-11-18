@@ -40,7 +40,7 @@ RSpec.describe ShamRack do
     end
 
     it "can be accessed using open-uri" do
-      response = open("http://www.greetings.com")
+      response = URI.open("http://www.greetings.com")
       expect(response.status).to eq(["200", "OK"])
       expect(response.read).to eq("Hello, world")
     end
@@ -74,7 +74,7 @@ RSpec.describe ShamRack do
           ["200 OK", { "Content-type" => "text/plain" }, ["Easy, huh?"]]
         end
 
-        expect(open("http://simple.xyz").read).to eq("Easy, huh?")
+        expect(URI.open("http://simple.xyz").read).to eq("Easy, huh?")
 
       end
 
@@ -96,7 +96,7 @@ RSpec.describe ShamRack do
 
         ShamRack.at("hello.xyz").mount(GreetingApp.new)
 
-        expect(open("http://hello.xyz").read).to eq("Hello, world")
+        expect(URI.open("http://hello.xyz").read).to eq("Hello, world")
 
       end
 
@@ -110,7 +110,7 @@ RSpec.describe ShamRack do
         ShamRack.at("gone.xyz").unmount
 
         expect do
-          open("http://gone.xyz").read
+          URI.open("http://gone.xyz").read
         end.to raise_error(NetHttpProhibited)
 
       end
@@ -127,7 +127,7 @@ RSpec.describe ShamRack do
       end
 
       it "mounts an app created using Rack::Builder" do
-        expect(open("http://rackup.xyz").read).to eq("HELLO, WORLD")
+        expect(URI.open("http://rackup.xyz").read).to eq("HELLO, WORLD")
       end
 
       it "returns the app" do
@@ -147,7 +147,7 @@ RSpec.describe ShamRack do
       end
 
       it "mounts associated block as a Sinatra app" do
-        expect(open("http://sinatra.xyz/hello/stranger").read).to eq("Hello, stranger")
+        expect(URI.open("http://sinatra.xyz/hello/stranger").read).to eq("Hello, stranger")
       end
 
       it "returns the app" do
@@ -334,7 +334,7 @@ RSpec.describe ShamRack do
 
     it "is valid" do
 
-      open("http://env.xyz/blah?q=abc")
+      URI.open("http://env.xyz/blah?q=abc")
 
       expect(env["REQUEST_METHOD"]).to eq("GET")
       expect(env["SCRIPT_NAME"]).to eq("")
